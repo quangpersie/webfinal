@@ -53,10 +53,10 @@
         }
         $exec = mysqli_query($connect, $query);
         if($exec) {
-            die("Successful to create folder ".$name);
+            echo "Successful to create folder ".$name;
         }
         else {
-            die("Failed to create folder ".$name);
+            echo "Failed to create folder ".$name;
         }
     }
 ?>

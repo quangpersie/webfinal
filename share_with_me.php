@@ -17,7 +17,8 @@ if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit();
 }
-$num = 0;
+$is_use = 0;
+$max = 0;
 $login = true;
 $email = $_SESSION['user'];
 $sql = "SELECT * FROM users WHERE username='" . $email . "' LIMIT 1";
@@ -26,6 +27,8 @@ $num_row = mysqli_num_rows($query);
 if ($num_row > 0) {
     $data = mysqli_fetch_assoc($query);
     $name = $data['name'];
+    $is_use = $data['use_size'];
+    $max = $data['size_page'];
 }
 if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
     unlink($_SESSION['url']);
@@ -63,7 +66,7 @@ if (isset($_GET['key'])) {
         }
     }
 } else {
-    
+
     $sql_sl_share = "SELECT * FROM share_with_me,file WHERE share_with_me.username='$email' AND share_with_me.id_file=file.id";
     $run_sel = mysqli_query($connect, $sql_sl_share);
 
@@ -146,15 +149,17 @@ if (isset($_GET['key'])) {
                     <a class="btn" id="btnPriority" href="priority.php">Quan trọng</a>
                     <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
                 </div>
-                <div class="share">
-                    <img src="css/images/share7.png" width="15%" height="15%">
-                    <a class="btn" id="btnShare" href="share.php">Đã chia sẻ</a>
-                    <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
-                </div>
-                <div class="share">
-                    <img src="css/images/share7.png" width="15%" height="15%">
-                    <a class="btn" id="btnShare" href="share_with_me.php">Chia sẻ với tôi</a>
-                    <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
+
+                <div class="dropdown">
+                    <img src="./CSS/images/share7.png" width="15%" height="15%">
+                    <button class="btn btn-secondary dropdown-toggle" id="dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Chia sẻ
+                    </button>
+                    <ul class="dropdown-menu" id="dropdownUL">
+                        <li><a class="dropdown-item" href="share.php">Đã chia sẻ</a></li>
+                        <li><a class="dropdown-item" href="share_with_me.php">Chia sẻ với tôi</a></li>
+
+                    </ul>
                 </div>
                 <div class="recent">
                     <img src="css/images/recent1.png" width="15%" height="15%">
@@ -166,11 +171,22 @@ if (isset($_GET['key'])) {
                     <a class="btn" id="btnTrash" href="trash.php">Thùng rác</a>
                     <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
                 </div>
+                <div class="share">
+                    <img src="./CSS/images/priority2.png" width="15%" height="15%">
+                    <a class="btn" id="btnTrash" href="upgrade.php">Dung lượng</a>
+                    <div>
+                        <?php
+                        $now_us = ($is_use / $max) * 100;
+                        ?>
+                        <progress id="file" value="<?php echo $now_us ?>" max="100"></progress>
+                    </div>
+                </div>
                 <div class="priority">
 
                     <a class="btn" id="btnPriority" href="priority.php"></a>
                     <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
                 </div>
+
             </nav>
 
             <article id="art2">
@@ -183,13 +199,11 @@ if (isset($_GET['key'])) {
                     </nav>
                     <?php
                     if ($num == 0) {
-                        if(isset($er)){
+                        if (isset($er)) {
                             echo "<h2 style=\"text-align:center\">$er</h2>";
-                        }   
-                        else{
+                        } else {
                             echo "<h2 style=\"text-align:center;color:red\">Chưa có dữ liệu nào được chia sẻ với bạn!</h2>";
                         }
-                        
                     } else {
                         while ($row = mysqli_fetch_array($run_sel)) {
                     ?>

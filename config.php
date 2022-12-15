@@ -14,6 +14,6 @@ function connect(){
     return $conn;
 }
 function getPrefix(){
-    return "localhost/source";
+    return "localhost/webfinal";
 }
 ?>
