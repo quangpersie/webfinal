@@ -36,7 +36,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'signup') {
         } else {
             $password_register = md5($_POST['password_register']);
             if (sendToken($name_register, $email_register, $token)) {
-                $sql_add = "INSERT INTO users(username,password,role,size_page,use_size,name,token) VALUES('" . $email_register . "','" . $password_register . "','1','100000000 ','0','" . $name_register . "','" . $token . "')";
+                $sql_add = "INSERT INTO users(username,password,role,size_page,use_size,name,token) VALUES('" . $email_register . "','" . $password_register . "','1','104857600 ','0','" . $name_register . "','" . $token . "')";
                 $query = mysqli_query($connect, $sql_add);
                 // header("Location:login.php");
                 if ($query) {

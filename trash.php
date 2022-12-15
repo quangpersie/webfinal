@@ -6,7 +6,7 @@ $login = false;
 $username = "";
 $email;
 $name = "";
-$role=$_SESSION['role'];
+$role = $_SESSION['role'];
 if ($role == 0) {
   header('Location: indexAdmin.php');
   exit();
@@ -16,6 +16,8 @@ if (!isset($_SESSION['user'])) {
   header('Location: login.php');
   exit();
 }
+$is_use = 0;
+$max = 0;
 $login = true;
 $email = $_SESSION['user'];
 $sql = "SELECT * FROM users WHERE username='" . $email . "' LIMIT 1";
@@ -24,6 +26,8 @@ $num_row = mysqli_num_rows($query);
 if ($num_row > 0) {
   $data = mysqli_fetch_assoc($query);
   $name = $data['name'];
+  $is_use = $data['use_size'];
+  $max = $data['size_page'];
 }
 if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
   unset($_SESSION['url']);
@@ -104,21 +108,23 @@ $num = mysqli_num_rows($run);
             <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li>
           </ul>
         </div>
+
         <div class="priority">
           <img src="css/images/priority5.png" width="15%" height="15%">
           <a class="btn" id="btnPriority" href="priority.php">Quan trọng</a>
           <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
         </div>
 
-        <div class="share">
-          <img src="css/images/share7.png" width="15%" height="15%">
-          <a class="btn" id="btnShare" href="share.php">Đã chia sẻ</a>
-          <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
-        </div>
-        <div class="share">
-          <img src="css/images/share7.png" width="15%" height="15%">
-          <a class="btn" id="btnShare" href="share_with_me.php">Chia sẻ với tôi</a>
-          <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
+        <div class="dropdown">
+          <img src="./CSS/images/share7.png" width="15%" height="15%">
+          <button class="btn btn-secondary dropdown-toggle" id="dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Chia sẻ
+          </button>
+          <ul class="dropdown-menu" id="dropdownUL">
+            <li><a class="dropdown-item" href="share.php">Đã chia sẻ</a></li>
+            <li><a class="dropdown-item" href="share_with_me.php">Chia sẻ với tôi</a></li>
+
+          </ul>
         </div>
         <div class="recent">
           <img src="css/images/recent1.png" width="15%" height="15%">
@@ -130,11 +136,22 @@ $num = mysqli_num_rows($run);
           <a class="btn" id="btnTrash" href="trash.php">Thùng rác</a>
           <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
         </div>
+        <div class="share">
+          <img src="./CSS/images/priority2.png" width="15%" height="15%">
+          <a class="btn" id="btnTrash" href="upgrade.php">Dung lượng</a>
+          <div>
+            <?php
+            $now_us = ($is_use / $max) * 100;
+            ?>
+            <progress id="file" value="<?php echo $now_us ?>" max="100"></progress>
+          </div>
+        </div>
         <div class="priority">
 
           <a class="btn" id="btnPriority" href="priority.php"></a>
           <!-- <button type="button" class="btn btn-light" id = "btnShare">Đã chia sẻ</button> -->
         </div>
+
       </nav>
 
       <article id="art2">

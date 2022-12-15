@@ -27,19 +27,3 @@ if (isset($_GET['path'])) {
         echo "File path does not exist.";
     }
 }
-else if($_POST['downmulti']) {
-    $files = array('readme.txt', 'test.html', 'image.gif');
-    $zipname = 'file.zip';
-    $zip = new ZipArchive;
-    $zip->open($zipname, ZipArchive::CREATE);
-    foreach ($files as $file) {
-    $zip->addFile($file);
-    }
-    $zip->close();
-
-    header('Content-Type: application/zip');
-    header('Content-disposition: attachment; filename='.$zipname);
-    header('Content-Length: ' . filesize($zipname));
-    readfile($zipname);
-}
-echo "File path is not defined."?>
