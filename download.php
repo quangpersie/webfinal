@@ -27,6 +27,3 @@ if (isset($_GET['path'])) {
         echo "File path does not exist.";
     }
 }
-echo "File path is not defined."
-
-    ?>
