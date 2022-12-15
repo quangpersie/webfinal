@@ -255,7 +255,7 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                                         <li><a class="dropdown-item" href="#">Tải về</a></li>
                                         <li><a class="dropdown-item" href="#">Đổi tên thư mục</a></li>
                                         <li><a class="dropdown-item" href="#"
-                                        onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a></li>
+                                        onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết</a></li>
                                         <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
                                         <li><a class="dropdown-item" href="#">Thêm vào quan trọng</a></li>
                                         <li><a class="dropdown-item" href="#">Xóa</a></li>
@@ -282,11 +282,11 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                             <div class="card-body">
                                 <p class="card-text" id="file_name">
                                     <?php
-                            if (strlen($row['file_name']) > 20) {
-                                echo substr($row['file_name'], 0, 19) . '...';
-                            } else {
-                                echo $row['file_name'];
-                            }
+                                        if (strlen($row['file_name']) > 20) {
+                                            echo substr($row['file_name'], 0, 19) . '...';
+                                        } else {
+                                            echo $row['file_name'];
+                                        }
                                     ?>
                                 </p>
                                 <div class="dropdown" id="dropdownThuMuc"
@@ -295,8 +295,8 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                                         aria-expanded="false">
                                         <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Tải về</a></li>
-                                        <li><a class="dropdown-item" href="#">Đổi tên tập tin</a></li>
+                                        <li><a class="dropdown-item" href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="">Đổi tên tập tin</a></li>
                                         <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
                                         <li><a class="dropdown-item" href="#"
                                                 onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
@@ -395,20 +395,28 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
 
         function createFolder() {
             var fname = $('#newFolderName').val()
-            $.ajax({
-                url: "folder_service.php",
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    username: '<?=$email?>',
-                    name: fname,
-                    parent: '<?=$_SESSION['cur_folder']?>',
-                },
-                success:function(data) {
-                    alert("Create successfully")
-                }
-            })
-            location.href = 'index.php';
+            if($.trim(fname) != '') {
+                $.ajax({
+                    url: "folder_service.php",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        username: '<?=$email?>',
+                        name: fname,
+                        parent: '<?=$_SESSION['cur_folder']?>',
+                    },
+                    success:function(data) {
+                        // alert("Create successfully")
+                    },
+                    error: function(data) {
+                        alert("Create successfully")
+                    }
+                })
+                location.href = 'index.php';
+            }
+            else {
+                alert('Tên thư mục không được rỗng')
+            }
         }
 
         function deleted(id) {
