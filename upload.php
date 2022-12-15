@@ -4,12 +4,20 @@
     $filename=$_POST['filename'];
     $folder_container = $_POST['folder'];
 
+    // $dir = $_SERVER['DOCUMENT_ROOT'] . "/source" . "/files/" . $username;
+
     session_start();
     $folder=$_SESSION['user'];
     if (!file_exists('files/' . $folder)) {
         mkdir("files/" . $folder, 0777, true);
     }
-    $dir = 'files/'. $folder.'/';
+    $dir_sql = 'files/'. $folder.'/';
+    $dir = $_SERVER['DOCUMENT_ROOT'] . '/source' . '/files/'.$folder.'/';
+    if(count($_SESSION['assign_path']) > 0) {
+        $dir = $dir.join('/', $_SESSION['assign_path']).'/';
+        $dir_sql = $dir_sql.join('/', $_SESSION['assign_path']).'/';
+    }
+
     $uploadOk = 1;
     $target_file=$dir.basename($_FILES["file"]["name"]);
     $type=strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -46,7 +54,7 @@
         $image = $image . 'xls.png';
     }
     else {
-        $image= $dir . $filename;
+        $image= $dir_sql . $filename;
     }
     $new_path=$dir.$filename;
     if (file_exists($target_file)) {
@@ -63,30 +71,31 @@
     }
     if ($uploadOk == 0) {
         echo "Không thể tải lên tệp tin.";
-    } else {
+    }
+    else {
         if (move_uploaded_file($_FILES['file']['tmp_name'], $new_path)) {
-        $use=$use+$size;
-        if($use>$limit){
-            echo 'Dung lượng lưu trữ đã đạt tối đa. Không thể lưu trữ thêm';
-        }
-        else{
-            $insert;
-            if($folder_container == 'NULL') {
-                $insert = "INSERT INTO file(username,file_name,type,size,modify,deleted,open_time,image) VALUE('" . $folder . "','" . $filename . "','" . $type . "','" . $size . "','" . $t . "','0','" . $t . "','" . $image . "')";
-            } else {
-                $insert = "INSERT INTO file(username,file_name,type,size,modify,deleted,open_time,image,folder) VALUE('" . $folder . "','" . $filename . "','" . $type . "','" . $size . "','" . $t . "','0','" . $t . "','" . $image . "','" . $folder_container . "')";
+            $use=$use+$size;
+            if($use>$limit) {
+                echo 'Dung lượng lưu trữ đã đạt tối đa. Không thể lưu trữ thêm';
             }
-            $query = mysqli_query($connect, $insert);
-            $update = "UPDATE users SET use_size='$use' WHERE username='$folder'";
-            $query1 = mysqli_query($connect, $update);
-            if ($query && $query1) {
-                echo htmlspecialchars(basename($_FILES["file"]["name"])) . " đã được tải lên thành công";
-            } else {
-                echo mysqli_error($connect);
+            else {
+                $insert;
+                if($folder_container == 'NULL') {
+                    $insert = "INSERT INTO file(username,file_name,type,size,modify,deleted,open_time,image) VALUE('" . $folder . "','" . $filename . "','" . $type . "','" . $size . "','" . $t . "','0','" . $t . "','" . $image . "')";
+                } else {
+                    $insert = "INSERT INTO file(username,file_name,type,size,modify,deleted,open_time,image,folder) VALUE('" . $folder . "','" . $filename . "','" . $type . "','" . $size . "','" . $t . "','0','" . $t . "','" . $image . "','" . $folder_container . "')";
+                }
+                $query = mysqli_query($connect, $insert);
+                $update = "UPDATE users SET use_size='$use' WHERE username='$folder'";
+                $query1 = mysqli_query($connect, $update);
+                if ($query && $query1) {
+                    echo htmlspecialchars(basename($_FILES["file"]["name"])) . " đã được tải lên thành công";
+                } else {
+                    echo mysqli_error($connect);
+                }
             }
         }
-        
-        } else {
+        else {
             echo "Đã có sự cố trong quá trình tải lên.Vui lòng thử lại" ;
         }
     }

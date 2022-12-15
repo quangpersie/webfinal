@@ -2,7 +2,7 @@
     include_once("./config.php");
     $connect = connect();
     session_start();
-    
+
     // $_SESSION['assign_path'] = array();
     if(count($_SESSION['path']) != 0) {
         $_SESSION['assign_path'] = $_SESSION['path'];
@@ -44,6 +44,10 @@
         $name = $_POST['name'];
         $parent = $_POST['parent'];
         $time = date('y-m-d h:i:s');
+        
+        $dir = $_SERVER['DOCUMENT_ROOT'] . '/source' . '/files/'.$username.'/';
+        $dir = $dir.join('/', $_SESSION['assign_path']);
+        mkdir($dir.'/'.$_POST['name'], 0777, true);
 
         if($parent == 'NULL') {
             $query = "INSERT INTO folder(username,name,date_create,modify) VALUE('" . $username . "','" . $name . "','" . $time . "','" . $time . "')";
