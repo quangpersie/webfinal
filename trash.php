@@ -35,7 +35,7 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
   header('Location: login.php');
   exit();
 }
-$sql_select = "SELECT * FROM file WHERE username='" . $email . "'";
+$sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted=1";
 $run = mysqli_query($connect, $sql_select);
 $num = mysqli_num_rows($run);
 
@@ -159,7 +159,6 @@ $num = mysqli_num_rows($run);
           <?php
           if ($num > 0) {
             while ($row = mysqli_fetch_array($run)) {
-              if ($row['deleted'] == 1) {
           ?>
                 <div class="col-lg-3 col-md-4">
                   <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px; z-index: 2">
@@ -180,9 +179,7 @@ $num = mysqli_num_rows($run);
             <?php
               }
             }
-            ?>
-          <?php
-          } else {
+            else {
             echo "<h2 style=\"text-align:center\">Thùng rác trống!</h2>";
           }
           ?>
