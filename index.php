@@ -56,9 +56,9 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
 }
 
 // debug
-$dir = $_SERVER['DOCUMENT_ROOT'] . '/source' . '/files/'.$email.'/';
+/* $dir = $_SERVER['DOCUMENT_ROOT'] . '/source' . '/files/'.$email.'/';
 $dir = $dir.join('/', $_SESSION['path']);
-echo $dir;
+echo $dir; */
 
 if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
     $search = strtok($_POST['search'], ".");
@@ -192,10 +192,10 @@ $num = mysqli_num_rows($run);
                         <form style=" background: linear-gradient(135deg, #71b7e6, #9b59b6); border-radius:10px; padding:20px">
                             <h style=" color: black; font-size: 25px; font-family: 'Times New Roman', Times, serif; margin: 25%">
                                 Đổi tên thư mục</h>
-                            <input class="form-control" type="text" id="editFolderName">
+                            <input class="form-control" type="text" id="idEditFolderName">
                             <p id="error" style="text-align:center;color:red"></p>
                             <div class="formAdd" style="display: flex;">
-                                <button type="button" id="btnAddFile" onclick="editFolderName()"> Đổi </button>
+                                <button type="button" id="btnAddFile" onclick="cfEditFolderName()"> Đổi </button>
                                 <button type="button" id="btnCancel" onclick="cancelEditFolder()"> Hủy </button>
                             </div>
                         </form>
@@ -208,10 +208,10 @@ $num = mysqli_num_rows($run);
                         <form style=" background: linear-gradient(135deg, #71b7e6, #9b59b6); border-radius:10px; padding:20px">
                             <h style=" color: black; font-size: 25px; font-family: 'Times New Roman', Times, serif; margin: 25%">
                                 Đổi tên tập tin</h>
-                            <input class="form-control" type="text" id="editFileName">
+                            <input class="form-control" type="text" id="idEditFileName">
                             <p id="error" style="text-align:center;color:red"></p>
                             <div class="formAdd" style="display: flex;">
-                                <button type="button" id="btnAddFile" onclick="editFileName()"> Đổi </button>
+                                <button type="button" id="btnAddFile" onclick="cfEditFileName()"> Đổi </button>
                                 <button type="button" id="btnCancel" onclick="cancelEditFile()"> Hủy </button>
                             </div>
                         </form>
@@ -297,11 +297,12 @@ $num = mysqli_num_rows($run);
                                                 <?php echo $row['name'] ?>
                                             </p>
                                             <div class="dropdown" id="dropdownThuMuc" style=" background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;">
-                                                <button id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
+                                                <button onclick="getCurFolder('<?=$row['name']?>', '<?=$row['id']?>')" id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <img src="./CSS/images/3dot.png" width="15%" height="15%">
+                                                </button>
                                                 <ul class="dropdown-menu">
                                                     <li><a class="dropdown-item" href="download.php?path=<?php echo $row['name'] ?>&username=<?php echo $row['username'] ?>">Tải về</a></li>
-                                                    <li><a class="dropdown-item" href="#" onclick="renameFolder()">Đổi tên thư mục</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="showRenameFolder()">Đổi tên thư mục</a></li>
                                                     <li><a class="dropdown-item" href="#" onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
                                                     </li>
                                                     <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
@@ -339,15 +340,15 @@ $num = mysqli_num_rows($run);
                                             ?>
                                         </p>
                                         <div class="dropdown" id="dropdownThuMuc" style=" background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;">
-                                            <button id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
+                                            <button onclick="getCurFile('<?=$row['file_name']?>', '<?=$row['id']?>')" id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <img src="./CSS/images/3dot.png" width="15%" height="15%">
+                                            </button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
-                                        <li><a class=" dropdown-item" href="#" onclick="renameFile()">Đổi tên tập tin</a></li>
+                                                <li><a class=" dropdown-item" href="#" onclick="showRenameFile()">Đổi tên tập tin</a></li>
                                                 <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
-                                                <li><a class="dropdown-item" href="set_starred.php?id=<?php echo $row['id'] ?>">
-                                                        Thêm vào quan trọng</a></li>
+                                                <li><a class="dropdown-item" href="set_starred.php?id=<?php echo $row['id'] ?>">Thêm vào quan trọng</a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="deleted(<?php echo $row['id'] ?>)">Xóa</a></li>
                                             </ul>
                                         </div>
@@ -384,10 +385,17 @@ $num = mysqli_num_rows($run);
         <p>Footer</p>
     </footer>
     <script>
-        let popup = document.getElementById("popup");
-        let popupFolder = document.getElementById("popupFolder");
-        let popupEditFolder = document.getElementById("popupEditFolder");
-        let popupEditFile = document.getElementById("popupEditFile");
+        var popup = document.getElementById("popup");
+        var popupFolder = document.getElementById("popupFolder");
+        var popupEditFolder = document.getElementById("popupEditFolder");
+        var popupEditFile = document.getElementById("popupEditFile");
+
+        var temp = {
+            id : -1,
+            curFile: 'file',
+            curFolder: 'folder',
+            isFile: false
+        }
 
         function openPopup() {
             popup.classList.add("open-popup");
@@ -549,12 +557,26 @@ $num = mysqli_num_rows($run);
             location.href = 'index.php';
         }
 
-        function renameFolder() {
-            popupEditFolder.classList.add("open-popup");
+        function getCurFolder(cfo,id) {
+            temp.curFolder = cfo
+            temp.id = id
+            temp.isFile = false
         }
 
-        function renameFile() {
+        function getCurFile(cfi,id) {
+            temp.curFile = cfi
+            temp.id = id
+            temp.isFile = true
+        }
+
+        function showRenameFolder() {
+            popupEditFolder.classList.add("open-popup");
+            $('#idEditFolderName').val(temp.curFolder)
+        }
+
+        function showRenameFile() {
             popupEditFile.classList.add("open-popup");
+            $('#idEditFileName').val(temp.curFile)
         }
 
         function cancelEditFolder() {
@@ -565,29 +587,59 @@ $num = mysqli_num_rows($run);
             popupEditFile.classList.remove("open-popup");
         }
 
-        function editFolderName() {
-            $.ajax({
-                url: 'rename.php',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    new_name: '',
-                    item_path: ''
-                }
-            })
-        } 
-        function cancelEditFile() {
-            $.ajax({
-                url: 'rename.php',
-                type: 'POST',
-                dataType: 'json',
-                data: {
-                    new_name: '',
-                    item_path: ''
-                }
-            })
-        } 
+        function cfEditFolderName() {
+            var efo = $('#idEditFolderName').val()
+            console.log("efo = " + efo)
+            console.log($.trim(efo))
+            if ($.trim(efo) != '') {
+                $.ajax({
+                    url: 'rename.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        usernameFO: '<?=$email?>',
+                        new_nameFO: efo,
+                        idFO: temp.id,
+                        old_nameFO: temp.curFolder,
+                    },
+                    success: function(data){
+                        alert('ok')
+                    },
+                    error: function(data){
+                        alert('Đổi tên thành công!')
+                    }
+                })
+                location.href = 'index.php';
+            } else {
+                alert('Tên thư mục không thể trống!')
+            }
+        }
+
+        function cfEditFileName() {
+            var efi = $('#idEditFileName').val()
+            if ($.trim(efi) != '') {
+                $.ajax({
+                    url: 'rename.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        usernameFI: '<?=$email?>',
+                        new_nameFI: efi,
+                        idFI: temp.id,
+                        old_nameFI: temp.curFile,
+                    },
+                    success: function(data){
+
+                    },
+                    error: function(data){
+                        alert('Đổi tên thành công!')
+                    }
+                })
+                location.href = 'index.php';
+            } else {
+                alert('Tên tập tin không thể trống!')
+            }
+        }
     </script>
 </body>
-
 </html>
