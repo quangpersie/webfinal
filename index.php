@@ -56,22 +56,22 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
 }
 
 
-    if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
-        $search = strtok($_POST['search'], ".");
-        $search = mysqli_escape_string($connect, $search);
-        $sql_search = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and SUBSTRING_INDEX(file_name,'.',1) LIKE '%$search%'";
-        $run = mysqli_query($connect, $sql_search);
-        $num = mysqli_num_rows($run);
-    }
-    $sql_select;
-    if ($_SESSION['cur_folder'] == 'NULL') {
-        $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder is NULL";
-    } else {
-        $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder ='" . $_SESSION['cur_folder'] . "'";
-    }
-    $run = mysqli_query($connect, $sql_select);
-
+if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
+    $search = strtok($_POST['search'], ".");
+    $search = mysqli_escape_string($connect, $search);
+    $sql_search = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and SUBSTRING_INDEX(file_name,'.',1) LIKE '%$search%'";
+    $run = mysqli_query($connect, $sql_search);
     $num = mysqli_num_rows($run);
+}
+$sql_select;
+if ($_SESSION['cur_folder'] == 'NULL') {
+    $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder is NULL";
+} else {
+    $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder ='" . $_SESSION['cur_folder'] . "'";
+}
+$run = mysqli_query($connect, $sql_select);
+
+$num = mysqli_num_rows($run);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -126,6 +126,7 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
                                 <li><a class="dropdown-item" href="./changePassword.php">Đổi mật khẩu</a></li>
 
                                 <li><a class="dropdown-item" href="index.php?dangxuat=1">Đăng xuất</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
@@ -181,6 +182,38 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
                     </div>
                 </div>
 
+                <!-- edit folder -->
+                <div>
+                    <div class="popup" id="popupEditFolder">
+                        <form style=" background: linear-gradient(135deg, #71b7e6, #9b59b6); border-radius:10px; padding:20px">
+                            <h style=" color: black; font-size: 25px; font-family: 'Times New Roman', Times, serif; margin: 25%">
+                                Đổi tên thư mục</h>
+                            <input class="form-control" type="text" id="editFolderName">
+                            <p id="error" style="text-align:center;color:red"></p>
+                            <div class="formAdd" style="display: flex;">
+                                <button type="button" id="btnAddFile" onclick="editFolder()"> Đổi </button>
+                                <button type="button" id="btnCancel" onclick="cancelEditFolder()"> Hủy </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- edit file -->
+                <div>
+                    <div class="popup" id="popupEditFile">
+                        <form style=" background: linear-gradient(135deg, #71b7e6, #9b59b6); border-radius:10px; padding:20px">
+                            <h style=" color: black; font-size: 25px; font-family: 'Times New Roman', Times, serif; margin: 25%">
+                                Đổi tên tập tin</h>
+                            <input class="form-control" type="text" id="editFileName">
+                            <p id="error" style="text-align:center;color:red"></p>
+                            <div class="formAdd" style="display: flex;">
+                                <button type="button" id="btnAddFile" onclick="editFolder()"> Đổi </button>
+                                <button type="button" id="btnCancel" onclick="cancelEditFile()"> Hủy </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="priority">
                     <img src="./CSS/images/priority5.png" width="15%" height="15%">
                     <a class="btn" id="btnPriority" href="priority.php">Quan trọng</a>
@@ -231,9 +264,7 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
                             foreach ($variable as $key) {
                                 if ($key != 'NULL') {
                             ?>
-                                    <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')">
-                                            <?= $key ?>
-                                        </a></li>
+                                    <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')"><?= $key ?></a></li>
                             <?php
                                 }
                             }
@@ -242,44 +273,43 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
                         </ol>
                     </nav>
                     <?php
-                    if(!isset($_GET['search'])){
-                    $select_folder;
-                    if ($_SESSION['cur_folder'] == 'NULL') {
-                        $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent is NULL";
-                    } else {
-                        $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent ='" . $_SESSION['cur_folder'] . "'";
-                    }
-                    $exec_folder = mysqli_query($connect, $select_folder);
-                    $fnum = mysqli_num_rows($exec_folder);
-                    if ($fnum != 0) {
-                        while ($row = mysqli_fetch_array($exec_folder)) {
-
+                    if (!isset($_GET['search'])) {
+                        $select_folder;
+                        if ($_SESSION['cur_folder'] == 'NULL') {
+                            $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent is NULL";
+                        } else {
+                            $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent ='" . $_SESSION['cur_folder'] . "'";
+                        }
+                        $exec_folder = mysqli_query($connect, $select_folder);
+                        $fnum = mysqli_num_rows($exec_folder);
+                        if ($fnum != 0) {
+                            while ($row = mysqli_fetch_array($exec_folder)) {
                     ?>
-                            <div class="col-lg-3 col-md-3">
-                                <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px;">
-                                    <img src="./CSS/images/folder.webp" class="card-img-top">
-                                    <div class="card-body">
-                                        <p class="card-text" id="folder_name">
-                                            <?php echo $row['name'] ?>
-                                        </p>
-                                        <div class="dropdown" id="dropdownThuMuc" style=" background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;">
-                                            <button id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="download.php?path=<?php echo $row['name'] ?>&username=<?php echo $row['username'] ?>">Tải về</a></li>
-                                                <li><a class="dropdown-item" href="#">Đổi tên thư mục</a></li>
-                                                <li><a class="dropdown-item" href="#" onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
-                                                </li>
-                                                <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
-                                                <li><a class="dropdown-item" href="#">Thêm vào quan trọng</a></li>
-                                                <li><a class="dropdown-item" href="#">Xóa</a></li>
-                                            </ul>
+                                <div class="col-lg-3 col-md-3">
+                                    <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px;">
+                                        <img src="./CSS/images/folder.webp" class="card-img-top">
+                                        <div class="card-body">
+                                            <p class="card-text" id="folder_name">
+                                                <?php echo $row['name'] ?>
+                                            </p>
+                                            <div class="dropdown" id="dropdownThuMuc" style=" background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;">
+                                                <button id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="download.php?path=<?php echo $row['name'] ?>&username=<?php echo $row['username'] ?>">Tải về</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="renameFolder()">Đổi tên thư mục</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
+                                                    </li>
+                                                    <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
+                                                    <li><a class="dropdown-item" href="#">Thêm vào quan trọng</a></li>
+                                                    <li><a class="dropdown-item" href="#">Xóa</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                     <?php
-                        }
+                            }
                         }
                     }
                     ?>
@@ -309,7 +339,7 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
                                                 <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
-                                        <li><a class=" dropdown-item" href="#" onclick="">Đổi tên tập tin</a></li>
+                                        <li><a class=" dropdown-item" href="#" onclick="renameFile()">Đổi tên tập tin</a></li>
                                                 <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
                                                 <li><a class="dropdown-item" href="set_starred.php?id=<?php echo $row['id'] ?>">
@@ -352,13 +382,14 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
     <script>
         let popup = document.getElementById("popup");
         let popupFolder = document.getElementById("popupFolder");
+        let popupEditFolder = document.getElementById("popupEditFolder");
+        let popupEditFile = document.getElementById("popupEditFile");
 
         function openPopup() {
             popup.classList.add("open-popup");
         }
 
         function openShare(id) {
-
             document.getElementById("share").classList.add("open-popup");
             document.getElementById("id_file").value = id;
         }
@@ -464,7 +495,6 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
             var user_arr = [];
             if (users !== '') {
                 user_arr = users.split(",");
-
             }
 
             user_share = JSON.stringify(user_arr);
@@ -513,6 +543,22 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
                 }
             });
             location.href = 'index.php';
+        }
+
+        function renameFolder() {
+            popupEditFolder.classList.add("open-popup");
+        }
+
+        function renameFile() {
+            popupEditFile.classList.add("open-popup");
+        }
+
+        function cancelEditFolder() {
+            popupEditFolder.classList.remove("open-popup");
+        }
+
+        function cancelEditFile() {
+            popupEditFile.classList.remove("open-popup");
         }
     </script>
 </body>
