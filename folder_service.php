@@ -2,16 +2,39 @@
     include_once("./config.php");
     $connect = connect();
     session_start();
-    $_SESSION['assign_path'] = array();
+    
+    // $_SESSION['assign_path'] = array();
+    if(count($_SESSION['path']) != 0) {
+        $_SESSION['assign_path'] = $_SESSION['path'];
+    } else {
+        $_SESSION['assign_path'] = array();
+    }
 
     if(isset($_POST['change_path'])) {
-        $_SESSION['assign_folder'] = $_POST['change_path'];
-        array_push($_SESSION['assign_path'], $_POST['change_path']);
+        $cp = $_POST['change_path'];
+        if($cp != 'NULL') {
+            // array_push($_SESSION['assign_path'], $cp);
+            // array_pop($_SESSION['assign_path']);
+            if(!in_array($cp, $_SESSION['assign_path'])) {
+                array_push($_SESSION['assign_path'], $cp);
+            }
+            else {
+                $index = array_search($cp, $_SESSION['assign_path']);
+                if($index != (count($_SESSION['assign_path']) - 1)) {
+                    array_splice($_SESSION['assign_path'],  $index+1);
+                }
+            }
+        }
+        else {
+            array_splice($_SESSION['assign_path'], 0);
+        }
+        
+        $t = 0;
         foreach ($_SESSION['assign_path'] as $key) {
-            echo $key;
-            echo '<br>';
+            echo $t.' - '.$key.'<br>';
         }
         echo '<br>';
+        $_SESSION['assign_folder'] = $cp;
         echo $_SESSION['assign_folder'];
         die($_SESSION['assign_folder']);
     }

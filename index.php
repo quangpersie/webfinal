@@ -18,6 +18,12 @@ if(isset($_SESSION['assign_folder'])) {
 } else {
     $_SESSION['cur_folder'] = 'NULL';
 }
+
+// debug
+/* echo $_SESSION['cur_folder'].'<br>';
+foreach ($_SESSION['path'] as $key) {
+    echo $key. ';';
+} */
 $cur_path = '';
 
 if ($role == 0) {
@@ -218,8 +224,8 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                             <!-- other folders -->
                             <?php
                                 $variable = $_SESSION['path'];
-                            foreach ($variable as $key) {
-                                if ($key != 'NULL') {
+                                foreach ($variable as $key) {
+                                    if ($key != 'NULL') {
                             ?>
                             <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')"><?= $key ?></a></li>
                             <?php
