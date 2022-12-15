@@ -266,8 +266,7 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
                                             <button id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải
-                                                        về</a></li>
+                                                <li><a class="dropdown-item" href="download.php?path=<?php echo $row['name'] ?>&username=<?php echo $row['username'] ?>">Tải về</a></li>
                                                 <li><a class="dropdown-item" href="#">Đổi tên thư mục</a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
                                                 </li>
