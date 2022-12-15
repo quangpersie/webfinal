@@ -55,6 +55,10 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
     exit();
 }
 
+// debug
+$dir = $_SERVER['DOCUMENT_ROOT'] . '/source' . '/files/'.$email.'/';
+$dir = $dir.join('/', $_SESSION['path']);
+echo $dir;
 
 if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
     $search = strtok($_POST['search'], ".");
@@ -191,7 +195,7 @@ $num = mysqli_num_rows($run);
                             <input class="form-control" type="text" id="editFolderName">
                             <p id="error" style="text-align:center;color:red"></p>
                             <div class="formAdd" style="display: flex;">
-                                <button type="button" id="btnAddFile" onclick="editFolder()"> Đổi </button>
+                                <button type="button" id="btnAddFile" onclick="editFolderName()"> Đổi </button>
                                 <button type="button" id="btnCancel" onclick="cancelEditFolder()"> Hủy </button>
                             </div>
                         </form>
@@ -207,7 +211,7 @@ $num = mysqli_num_rows($run);
                             <input class="form-control" type="text" id="editFileName">
                             <p id="error" style="text-align:center;color:red"></p>
                             <div class="formAdd" style="display: flex;">
-                                <button type="button" id="btnAddFile" onclick="editFolder()"> Đổi </button>
+                                <button type="button" id="btnAddFile" onclick="editFileName()"> Đổi </button>
                                 <button type="button" id="btnCancel" onclick="cancelEditFile()"> Hủy </button>
                             </div>
                         </form>
@@ -560,6 +564,29 @@ $num = mysqli_num_rows($run);
         function cancelEditFile() {
             popupEditFile.classList.remove("open-popup");
         }
+
+        function editFolderName() {
+            $.ajax({
+                url: 'rename.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    new_name: '',
+                    item_path: ''
+                }
+            })
+        } 
+        function cancelEditFile() {
+            $.ajax({
+                url: 'rename.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    new_name: '',
+                    item_path: ''
+                }
+            })
+        } 
     </script>
 </body>
 

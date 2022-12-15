@@ -56,7 +56,7 @@
     else {
         $image= $dir_sql . $filename;
     }
-    $new_path=$dir.$filename;
+    $new_path=$dir_sql.$filename;
     if (file_exists($target_file)) {
         echo "Tệp tin đã tồn tại.";
         $uploadOk = 0;
