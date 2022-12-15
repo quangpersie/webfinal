@@ -257,7 +257,7 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                                         <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item"
-                                                href="download.php?download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải
+                                                href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải
                                                 về</a></li>
                                         <li><a class="dropdown-item" href="#">Đổi tên thư mục</a></li>
                                         <li><a class="dropdown-item" href="#"
@@ -302,7 +302,9 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                                         aria-expanded="false">
                                         <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Tải về</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải
+                                                về</a></li>
                                         <li><a class="dropdown-item" href="#">Đổi tên tập tin</a></li>
                                         <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
                                         <li><a class="dropdown-item" href="#"
