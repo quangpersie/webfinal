@@ -43,6 +43,7 @@
         $username = $_POST['username'];
         $name = $_POST['name'];
         $parent = $_POST['parent'];
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
         $time = date('y-m-d h:i:s');
         
         $dir = $_SERVER['DOCUMENT_ROOT'] . '/source' . '/files/'.$username.'/';

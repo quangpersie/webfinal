@@ -156,31 +156,58 @@ $num = mysqli_num_rows($run);
 
       <article id="art2">
         <div class="row">
+
           <?php
-          if ($num > 0) {
-            while ($row = mysqli_fetch_array($run)) {
+          if (!isset($_GET['search'])) {
+            $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='1'";
+            $exec_folder = mysqli_query($connect, $select_folder);
+            $fnum = mysqli_num_rows($exec_folder);
+            if ($fnum != 0) {
+              while ($row = mysqli_fetch_array($exec_folder)) {
           ?>
-                <div class="col-lg-3 col-md-4">
-                  <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px; z-index: 2">
-                    <img src="./<?php echo $row['image'] ?>" class="card-img-top" width="256px" height="256px">
+                <div class="col-lg-3 col-md-3">
+                  <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px;">
+                    <img src="./CSS/images/folder.webp" class="card-img-top">
                     <div class="card-body">
-                      <p class="card-text"><?php
-                                            if (strlen($row['file_name']) > 20) {
-                                              echo substr($row['file_name'], 0, 19) . '...';
-                                            } else {
-                                              echo $row['file_name'];
-                                            }
-                                            ?></p>
-                      <a href="#" class="btn btn-primary" style="background-color:  rgb(118, 159, 205); border:none;" onclick="restore(<?php echo $row['id'] ?>)">Khôi phục</a>
-                      <a href="#" class="btn btn-primary" style="background-color:  rgb(235, 29, 54); border:none;" onclick="delete_file(<?php echo $row['id'] ?>)">Xóa</a>
+                      <p class="card-text" id="folder_name">
+                        <?php echo $row['name'] ?>
+                      </p>
+                      <a href="#" class="btn btn-primary" style="background-color:  rgb(118, 159, 205); border:none;" onclick="restoreFolder(<?php echo $row['id'] ?>)">Khôi phục</a>
+                    <a href="#" class="btn btn-primary" style="background-color:  rgb(235, 29, 54); border:none;" onclick="deleteFolder(<?php echo $row['id'] ?>)">Xóa</a>
                     </div>
                   </div>
                 </div>
-            <?php
+          <?php
               }
             }
-            else {
+          }
+          ?>
+
+          <?php
+          if ($num == 0 && $fnum == 0) {
             echo "<h2 style=\"text-align:center\">Thùng rác trống!</h2>";
+          }
+          else {
+            while ($row = mysqli_fetch_array($run)) {
+          ?>
+              <div class="col-lg-3 col-md-4">
+                <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px; z-index: 2">
+                  <img src="./<?php echo $row['image'] ?>" class="card-img-top" width="256px" height="256px">
+                  <div class="card-body">
+                    <p class="card-text"><?php
+                                          if (strlen($row['file_name']) > 20) {
+                                            echo substr($row['file_name'], 0, 19) . '...';
+                                          } else {
+                                            echo $row['file_name'];
+                                          }
+                                          ?></p>
+                    <a href="#" class="btn btn-primary" style="background-color:  rgb(118, 159, 205); border:none;" onclick="restore(<?php echo $row['id'] ?>)">Khôi phục</a>
+                    <a href="#" class="btn btn-primary" style="background-color:  rgb(235, 29, 54); border:none;" onclick="delete_file(<?php echo $row['id'] ?>)">Xóa</a>
+                  </div>
+                </div>
+              </div>
+          <?php
+            }
           }
           ?>
 
@@ -244,6 +271,50 @@ $num = mysqli_num_rows($run);
           location.reload();
         }
       });
+    }
+
+    function restoreFolder(id) {
+      var form_data = new FormData();
+      form_data.append("id", id);
+      form_data.append("restore_folder", 'ok');
+      console.log(id);
+      $.ajax({
+        url: "deleted.php",
+        type: "POST",
+        dataType: 'script',
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: form_data,
+        success: function(dat2) {
+          alert(dat2);
+          location.reload();
+        }
+      });
+    }
+
+    function deleteFolder(id) {
+      var del = confirm("Bạn có chắc chắn muốn xóa thư mục này vĩnh viễn không ?");
+      var form_data = new FormData();
+      form_data.append("id", id);
+      form_data.append("delete_folder_forever", 'ok');
+      if (del == true) {
+        console.log(id);
+        $.ajax({
+          url: "deleted.php",
+          type: "POST",
+          dataType: 'script',
+          cache: false,
+          contentType: false,
+          processData: false,
+          data: form_data,
+          success: function(dat2) {
+            alert(dat2);
+            location.reload();
+          }
+        });
+      }
+      return del;
     }
   </script>
 </body>

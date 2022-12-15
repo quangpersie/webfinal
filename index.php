@@ -307,7 +307,7 @@ $num = mysqli_num_rows($run);
                                                     </li>
                                                     <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
                                                     <li><a class="dropdown-item" href="#">Thêm vào quan trọng</a></li>
-                                                    <li><a class="dropdown-item" href="#">Xóa</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="deletedFolder('<?=$row['id']?>')">Xóa</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -349,7 +349,7 @@ $num = mysqli_num_rows($run);
                                                 <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
                                                 <li><a class="dropdown-item" href="set_starred.php?id=<?php echo $row['id'] ?>">Thêm vào quan trọng</a></li>
-                                                <li><a class="dropdown-item" href="#" onclick="deleted(<?php echo $row['id'] ?>)">Xóa</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="deletedFile(<?php echo $row['id'] ?>)">Xóa</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -472,10 +472,36 @@ $num = mysqli_num_rows($run);
             }
         }
 
-        function deleted(id) {
+        function deletedFile(id) {
             var del = confirm("Bạn có chắc chắn xóa file này không? File sẽ được chuyển vào thùng rác và tự động xóa sau 30 ngày.");
             var form_data = new FormData();
             form_data.append("id", id);
+            if (del == true) {
+                console.log(id);
+                $.ajax({
+                    url: "deleted.php",
+                    type: "POST",
+                    dataType: 'script',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
+                    success: function(dat2) {
+                        alert(dat2);
+                        location.reload();
+                    }
+                });
+            } else {
+
+            }
+            return del;
+        }
+
+        function deletedFolder(id) {
+            var del = confirm("Bạn có chắc chắn xóa thư mục này không? Thư mục sẽ được chuyển vào thùng rác và tự động xóa sau 30 ngày.");
+            var form_data = new FormData();
+            form_data.append("id", id);
+            form_data.append("del_folder_to_trash", 'ok');
             if (del == true) {
                 console.log(id);
                 $.ajax({
