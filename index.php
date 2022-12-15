@@ -8,12 +8,12 @@ $email;
 $name = "";
 $role = $_SESSION['role'];
 
-if(isset($_SESSION['assign_path'])) {
+if (isset($_SESSION['assign_path'])) {
     $_SESSION['path'] = $_SESSION['assign_path'];
 } else {
     $_SESSION['path'] = array();
 }
-if(isset($_SESSION['assign_folder'])) {
+if (isset($_SESSION['assign_folder'])) {
     $_SESSION['cur_folder'] = $_SESSION['assign_folder'];
 } else {
     $_SESSION['cur_folder'] = 'NULL';
@@ -46,7 +46,7 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
 }
 
 $sql_select;
-if($_SESSION['cur_folder'] == 'NULL') {
+if ($_SESSION['cur_folder'] == 'NULL') {
     $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder is NULL";
 } else {
     $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder ='" . $_SESSION['cur_folder'] . "'";
@@ -110,7 +110,7 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                                 aria-expanded="false">
                                 <?php
                                 if ($name != "") {
-                                    echo $name.' - '.$_SESSION['cur_folder'];
+                                    echo $name . ' - ' . $_SESSION['cur_folder'];
                                 } else {
                                     echo "User";
                                 }
@@ -209,19 +209,22 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
 
             </nav>
 
-<div style="display: none;">Here</div>
+            <div style="display: none;">Here</div>
             <article id="art2">
                 <div class="row">
-                    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+                    <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+                        aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" onclick="changePath('NULL')">Thư mục gốc</a></li>
                             <!-- other folders -->
                             <?php
-                                $variable = $_SESSION['path'];
+                            $variable = $_SESSION['path'];
                             foreach ($variable as $key) {
                                 if ($key != 'NULL') {
                             ?>
-                            <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')"><?= $key ?></a></li>
+                            <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')">
+                                    <?= $key ?>
+                                </a></li>
                             <?php
                                 }
                             }
@@ -230,31 +233,36 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                         </ol>
                     </nav>
                     <?php
-                        $select_folder;
-                        if($_SESSION['cur_folder'] == 'NULL') {
-                            $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent is NULL";
-                        } else {
-                            $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent ='" . $_SESSION['cur_folder'] . "'";
-                        }
-                        $exec_folder = mysqli_query($connect, $select_folder);
-                        if(mysqli_num_rows($exec_folder) != 0) {
-                            while ($row = mysqli_fetch_array($exec_folder)) {
+                    $select_folder;
+                    if ($_SESSION['cur_folder'] == 'NULL') {
+                        $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent is NULL";
+                    } else {
+                        $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent ='" . $_SESSION['cur_folder'] . "'";
+                    }
+                    $exec_folder = mysqli_query($connect, $select_folder);
+                    if (mysqli_num_rows($exec_folder) != 0) {
+                        while ($row = mysqli_fetch_array($exec_folder)) {
                     ?>
                     <div class="col-lg-3 col-md-3">
                         <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px;">
                             <img src="./CSS/images/folder.webp" class="card-img-top">
                             <div class="card-body">
-                                <p class="card-text" id="folder_name"><?php echo $row['name'] ?></p>
+                                <p class="card-text" id="folder_name">
+                                    <?php echo $row['name'] ?>
+                                </p>
                                 <div class="dropdown" id="dropdownThuMuc"
                                     style=" background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;">
                                     <button id="dropDownOfFile" type="button" data-bs-toggle="dropdown"
                                         aria-expanded="false">
                                         <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Tải về</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="download.php?download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải
+                                                về</a></li>
                                         <li><a class="dropdown-item" href="#">Đổi tên thư mục</a></li>
                                         <li><a class="dropdown-item" href="#"
-                                        onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a></li>
+                                                onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
+                                        </li>
                                         <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
                                         <li><a class="dropdown-item" href="#">Thêm vào quan trọng</a></li>
                                         <li><a class="dropdown-item" href="#">Xóa</a></li>
@@ -264,8 +272,8 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                         </div>
                     </div>
                     <?php
-                            }
                         }
+                    }
                     ?>
 
 
@@ -373,7 +381,7 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                 var form_data = new FormData();
                 form_data.append("file", file_data);
                 form_data.append("filename", file_name);
-                form_data.append("folder", '<?= $_SESSION['cur_folder']?>')
+                form_data.append("folder", '<?= $_SESSION['cur_folder'] ?>')
                 $.ajax({
                     url: "upload.php",
                     type: "POST",
