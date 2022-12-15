@@ -269,13 +269,9 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                                                 href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải
                                                 về</a></li>
                                         <li><a class="dropdown-item" href="#">Đổi tên thư mục</a></li>
-                                        <li><a class="dropdown-item" href="#" <<<<<<< HEAD
+                                        <li><a class="dropdown-item" href="#"
                                                 onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
                                         </li>
-                                        =======
-                                        onclick="changePath('
-                                        <?php echo $row['name'] ?>')">Xem chi tiết</a></li>
-                                        >>>>>>> 957f171ab11aef1c4bab757b3d5e8cbd24d25f90
                                         <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
                                         <li><a class="dropdown-item" href="#">Thêm vào quan trọng</a></li>
                                         <li><a class="dropdown-item" href="#">Xóa</a></li>
@@ -315,23 +311,16 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                                         aria-expanded="false">
                                         <img src="./CSS/images/3dot.png" width="15%" height="15%"> </button>
                                     <ul class="dropdown-menu">
-                                        <<<<<<< HEAD <li><a class="dropdown-item"
-                                                href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải
-                                                về</a></li>
-                                            <li><a class="dropdown-item" href="#">Đổi tên tập tin</a></li>
-                                            =======
-                                            <li><a class="dropdown-item"
-                                                    href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
                                         <li><a class=" dropdown-item" href="#" onclick="">Đổi tên tập tin</a></li>
-                                            >>>>>>> 957f171ab11aef1c4bab757b3d5e8cbd24d25f90
-                                            <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
-                                            <li><a class="dropdown-item" href="#"
-                                                    onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
-                                            <li><a class="dropdown-item"
-                                                    href="set_starred.php?id=<?php echo $row['id'] ?>">
-                                                    Thêm vào quan trọng</a></li>
-                                            <li><a class="dropdown-item" href="#"
-                                                    onclick="deleted(<?php echo $row['id'] ?>)">Xóa</a></li>
+                                        <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
+                                        <li><a class="dropdown-item" href="#"
+                                                onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
+                                        <li><a class="dropdown-item" href="set_starred.php?id=<?php echo $row['id'] ?>">
+                                                Thêm vào quan trọng</a></li>
+                                        <li><a class="dropdown-item" href="#"
+                                                onclick="deleted(<?php echo $row['id'] ?>)">Xóa</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -515,6 +504,7 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
         }
 
         function changePath(cur) {
+            console.log(cur)
             $.ajax({
                 url: "folder_service.php",
                 type: "POST",
