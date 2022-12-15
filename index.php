@@ -138,7 +138,7 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                         Thư mục của tôi
                     </button>
                     <ul class="dropdown-menu" id="dropdownUL">
-                        <li><a class="dropdown-item" href="index.php">Thư mục gốc</a></li>
+                        <li><a class="dropdown-item" href="index.php" onclick="changePath('NULL')">Thư mục gốc</a></li>
                         <li><a class="dropdown-item" href="#" onclick="openPopupFolder()">Thêm thư mục</a></li>
                         <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li>
                     </ul>
@@ -237,7 +237,8 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
                             $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent ='" . $_SESSION['cur_folder'] . "'";
                         }
                         $exec_folder = mysqli_query($connect, $select_folder);
-                        if(mysqli_num_rows($exec_folder) != 0) {
+                        $fnum = mysqli_num_rows($exec_folder);
+                        if($fnum != 0) {
                             while ($row = mysqli_fetch_array($exec_folder)) {
                     ?>
                     <div class="col-lg-3 col-md-3">
@@ -270,7 +271,7 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
 
 
                     <?php
-                    if ($num == 0) {
+                    if ($num == 0 && $fnum ==0) {
                         echo "<h2 style=\"text-align:center\">Chưa có dữ liệu lưu trữ</h2>";
                     } else {
                         while ($row = mysqli_fetch_array($run)) {
@@ -393,7 +394,21 @@ if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
         }
 
         function createFolder() {
-
+            var fname = $('#newFolderName').val()
+            $.ajax({
+                url: "folder_service.php",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    username: '<?=$email?>',
+                    name: fname,
+                    parent: '<?=$_SESSION['cur_folder']?>',
+                },
+                success:function(data) {
+                    alert("Create successfully")
+                }
+            })
+            location.href = 'index.php';
         }
 
         function deleted(id) {
