@@ -344,7 +344,7 @@ $num = mysqli_num_rows($run);
                                                 <img src="./CSS/images/3dot.png" width="15%" height="15%">
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
+                                                <li><a class="dropdown-item" href="download.php?file_down=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
                                                 <li><a class=" dropdown-item" href="#" onclick="showRenameFile()">Đổi tên tập tin</a></li>
                                                 <li><a class="dropdown-item btn btn-success" id="<?php echo $row['id']; ?>"
                                                 data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="getDetail(
@@ -481,17 +481,15 @@ $num = mysqli_num_rows($run);
                         name: fname,
                         parent: '<?= $_SESSION['cur_folder'] ?>',
                     },
-                    success: function(data) {
-                        alert(data);
-                        location.reload();
+                    success: function(data_success) {
+                        alert(data_success.data);
+                        location.href = 'index.php';
+                        location.reload()
                     },
-                    // error: function(data) {
-                    //     alert("Đã xảy ra sự cố. Vui lòng thử lại");
-                    //     location.reload();
-                    // }
+                    error: function(data_fail) {
+                        alert(data_fail.data);
+                    }
                 })
-                location.href = 'index.php';
-                location.reload()
             } else {
                 alert('Tên thư mục không được rỗng')
             }
@@ -590,23 +588,23 @@ $num = mysqli_num_rows($run);
         }
 
         function changePath(cur) {
-            console.log(cur)
+            // console.log(cur)
             $.ajax({
-                url: "folder_service.php",
-                type: "POST",
+                url: 'folder_service.php',
+                type: 'POST',
                 dataType: 'json',
                 data: {
                     change_path: cur
                 },
-                success: function(dataResponse) {
+                success: function(data_success) {
                     console.log("change path ok")
+                    location.href = 'index.php';
+                    location.reload()
                 },
-                error: function(dataResponse) {
+                error: function(data_fail) {
                     console.log("change path khok")
                 }
             });
-            location.href = 'index.php';
-            location.reload()
         }
 
         function getCurFolder(cfo,id) {
@@ -654,15 +652,15 @@ $num = mysqli_num_rows($run);
                         idFO: temp.id,
                         old_nameFO: temp.curFolder,
                     },
-                    success: function(data){
-                        alert('ok')
+                    success: function(data_success){
+                        alert(data_success.message)
+                        location.href = 'index.php';
+                        location.reload()
                     },
-                    error: function(data){
-                        alert('Đổi tên thành công!')
+                    error: function(data_fail){
+                        alert(data_fail.message)
                     }
                 })
-                location.href = 'index.php';
-                location.reload()
             } else {
                 alert('Tên thư mục không thể trống!')
             }
@@ -682,15 +680,15 @@ $num = mysqli_num_rows($run);
                         old_nameFI: temp.curFile,
                         isImg: true
                     },
-                    success: function(data){
-
+                    success: function(data_success){
+                        alert(data_success.message)
+                        location.href = 'index.php';
+                        location.reload()
                     },
-                    error: function(data){
-                        alert('Đổi tên thành công!')
+                    error: function(data_fail){
+                        alert(data_fail.message)
                     }
                 })
-                location.href = 'index.php';
-                location.reload()
             } else {
                 alert('Tên tập tin không thể trống!')
             }

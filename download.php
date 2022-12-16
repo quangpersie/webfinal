@@ -1,7 +1,13 @@
 <?php
-if (isset($_GET['path'])) {
+session_start();
+if (isset($_GET['file_down'])) {
     //Read the url
-    $url = "files/" . $_GET['username'] . "/" . $_GET['path'];
+    $url = 'files/' . $_GET['username'] . '/' ;
+    if(count($_SESSION['path']) > 0) {
+        $url = $url . join('/', $_SESSION['path']) . '/';
+    }
+    $url = $url . $_GET['file_down'];
+
     //Clear the cache
     clearstatcache();
 

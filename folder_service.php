@@ -43,14 +43,14 @@
             array_splice($_SESSION['assign_path'], 0);
         }
         
-        $t = 0;
+        $_SESSION['assign_folder'] = $cp;
+        /* $t = 0;
         foreach ($_SESSION['assign_path'] as $key) {
             echo $t.' - '.$key.'<br>';
         }
         echo '<br>';
-        $_SESSION['assign_folder'] = $cp;
-        echo $_SESSION['assign_folder'];
-        die($_SESSION['assign_folder']);
+        echo $_SESSION['assign_folder']; */
+        echo json_encode(array('folder' => $_SESSION['assign_folder'], 'path' => $_SESSION['assign_path']));
     }
 
     else if(isset($_POST['username']) && isset($_POST['name']) && isset($_POST['parent'])) {
@@ -72,10 +72,12 @@
         }
         $exec = mysqli_query($connect, $query);
         if($exec) {
-            echo "Successful to create folder ".$name;
+            $output = "Tạo thành công thư mục ".$name."!";
+            echo json_encode(array('data' => $output));
         }
         else {
-            echo "Failed to create folder ".$name;
+            $output = "Tạo không thành công thư mục ".$name;
+            echo json_encode(array('data' => $output))."!";
         }
     }
 ?>
