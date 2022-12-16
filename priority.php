@@ -1,6 +1,19 @@
 <?php
 session_start();
 include_once('./config.php');
+// $_SESSION = [];
+$cur_fol_pri = '';
+if(isset($_SESSION['assign_path_pri'])) {
+    $_SESSION['path_pri'] = $_SESSION['assign_path_pri'];
+} else {
+    $_SESSION['path_pri'] = array();
+}
+
+// $_SESSION['cur_folder_pri'] = '';
+// if (isset($_SESSION['assign_folder_pri'])) {
+//     $_SESSION['cur_folder_pri'] = $_SESSION['assign_folder_pri'];
+// }
+
 $connect = connect();
 $login = false;
 $username = "";
@@ -35,17 +48,21 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
     header('Location: login.php');
     exit();
 }
-$sql_sl = "SELECT * FROM file WHERE priority='1' and deleted=0 and username='$email'";
-$run_sql = mysqli_query($connect, $sql_sl);
-$num = mysqli_num_rows($run_sql);
-$select_folder = "SELECT * FROM folder WHERE priority='1' and deleted='0' and username='$email'";
-$exec_folder = mysqli_query($connect, $select_folder);
-if ($exec_folder) {
-    $fnum = mysqli_num_rows($exec_folder);
+
+$select_file;
+$select_folder;
+if($_SESSION['assign_folder_pri'] != '') {
+    $select_folder = "SELECT * FROM folder WHERE deleted='0' and username='$email' and parent = '".$_SESSION['assign_folder_pri']."'";
+    $select_file = "SELECT * FROM file WHERE deleted='0' and username='$email' and folder = '".$_SESSION['assign_folder_pri']."'";
 } else {
-    $fnum = 0;
-    echo mysqli_error($connect);
+    $select_folder = "SELECT * FROM folder WHERE priority='1' and deleted='0' and username='$email'";
+    $select_file = "SELECT * FROM file WHERE priority='1' and deleted='0' and username='$email'";
 }
+$exec_file = mysqli_query($connect, $select_file);
+$num_file = mysqli_num_rows($exec_file);
+
+$exec_folder = mysqli_query($connect, $select_folder);
+$num_folder = mysqli_num_rows($exec_folder);
 
 ?>
 
@@ -117,7 +134,7 @@ if ($exec_folder) {
                         Thư mục của tôi
                     </button>
                     <ul class="dropdown-menu" id="dropdownUL">
-                        <li><a class="dropdown-item" href="index.php" onclick="changePath('NULL')">Thư mục gốc</a></li>
+                        <li><a class="dropdown-item" href="index.php" onclick="changePath('')">Thư mục gốc</a></li>
                         <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li>
                     </ul>
                 </div>
@@ -198,14 +215,14 @@ if ($exec_folder) {
                 <div class="row" id="display_file">
                     <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" onclick="changePath('NULL')">Quan trọng</a></li>
+                            <li class="breadcrumb-item"><a href="#" onclick="changePath('')">Quan trọng</a></li>
                             <!-- other folders -->
                             <?php
-                            $variable = $_SESSION['path'];
+                            $variable = $_SESSION['path_pri'];
                             foreach ($variable as $key) {
                                 if ($key != 'NULL') {
                             ?>
-                                    <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')"><?= $key ?></a></li>
+                                <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')"><?= $key ?></a></li>
                             <?php
                                 }
                             }
@@ -216,7 +233,7 @@ if ($exec_folder) {
                     <?php
                     
                     $folder_data = array();
-                    if ($fnum != 0) {
+                    if ($num_folder != 0) {
                         while ($row = mysqli_fetch_array($exec_folder)) {
                             array_push($folder_data, $row)
                     ?>
@@ -250,10 +267,10 @@ if ($exec_folder) {
                     ?>
                     <?php
                     $file_data = array();
-                    if ($num == 0 && $fnum == 0) {
+                    if ($num_file == 0 && $num_folder == 0) {
                         echo "<h2 style=\"text-align:center\">Chưa có dữ liệu lưu trữ</h2>";
                     } else {
-                        while ($row = mysqli_fetch_array($run_sql)) {
+                        while ($row = mysqli_fetch_array($exec_file)) {
                             array_push($file_data, $row);
                     ?>
                             <div class="col-lg-3 col-md-3">
@@ -466,7 +483,7 @@ if ($exec_folder) {
                 type: "POST",
                 dataType: 'json',
                 data: {
-                    change_path: cur
+                    change_path_pri: cur
                 },
                 success: function(dataResponse) {
                     console.log("change path ok")

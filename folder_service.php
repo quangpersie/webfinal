@@ -10,6 +10,12 @@
         $_SESSION['assign_path'] = array();
     }
 
+    if(count($_SESSION['path_pri']) != 0) {
+        $_SESSION['assign_path_pri'] = $_SESSION['path_pri'];
+    } else {
+        $_SESSION['assign_path_pri'] = array();
+    }
+
     if(isset($_POST['change_path'])) {
         $cp = $_POST['change_path'];
         if($cp != 'NULL') {
@@ -37,6 +43,27 @@
         echo '<br>';
         echo $_SESSION['assign_folder']; */
         echo json_encode(array('folder' => $_SESSION['assign_folder'], 'path' => $_SESSION['assign_path']));
+    }
+
+    else if(isset($_POST['change_path_pri'])) {
+        $cp = $_POST['change_path_pri'];
+        if($cp != '') {
+            if(!in_array($cp, $_SESSION['assign_path_pri'])) {
+                array_push($_SESSION['assign_path_pri'], $cp);
+            }
+            else {
+                $index = array_search($cp, $_SESSION['assign_path_pri']);
+                if($index != (count($_SESSION['assign_path_pri']) - 1)) {
+                    array_splice($_SESSION['assign_path_pri'],  $index+1);
+                }
+            }
+        }
+        else {
+            array_splice($_SESSION['assign_path_pri'], 0);
+        }
+        
+        $_SESSION['assign_folder_pri'] = $cp;
+        echo json_encode(array('folder' => $_SESSION['assign_folder_pri'], 'path' => $_SESSION['assign_path_pri']));
     }
     
     else if(isset($_POST['get_detail'])) {
