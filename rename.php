@@ -44,6 +44,12 @@
         echo $dir . $old_name.'<br>';
         rename($dir.$old_name.'', $dir.$new_name.'');
 
+        foreach ($_SESSION['path'] as $key) {
+            if($key == $old_name) {
+                $key = $new_name;
+            }
+        }
+
 
         $q = "UPDATE folder SET name = '$new_name' WHERE id = '$id'";
         if(mysqli_query($connect, $q)) {

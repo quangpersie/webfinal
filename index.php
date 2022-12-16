@@ -467,6 +467,7 @@ $num = mysqli_num_rows($run);
                     // }
                 })
                 location.href = 'index.php';
+                location.reload()
             } else {
                 alert('Tên thư mục không được rỗng')
             }
@@ -581,6 +582,7 @@ $num = mysqli_num_rows($run);
                 }
             });
             location.href = 'index.php';
+            location.reload()
         }
 
         function getCurFolder(cfo,id) {
@@ -636,6 +638,7 @@ $num = mysqli_num_rows($run);
                     }
                 })
                 location.href = 'index.php';
+                location.reload()
             } else {
                 alert('Tên thư mục không thể trống!')
             }
@@ -662,6 +665,7 @@ $num = mysqli_num_rows($run);
                     }
                 })
                 location.href = 'index.php';
+                location.reload()
             } else {
                 alert('Tên tập tin không thể trống!')
             }
