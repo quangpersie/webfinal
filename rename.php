@@ -50,10 +50,12 @@
         // echo $dir. $old_name.'<br>';
         rename($dir.$old_name.'', $dir.$new_name.'');
         $new_image = $dir_sql.$new_name;
-        if($_POST['isImg'] != false) {
-            $q = "UPDATE file SET file_name = '$new_name' WHERE id = '$id'";
-        } else {
+
+        $q;
+        if($_POST['isImg'] == '1') {
             $q = "UPDATE file SET file_name = '$new_name', image = '$new_image' WHERE id = '$id'";
+        } else {
+            $q = "UPDATE file SET file_name = '$new_name' WHERE id = '$id'";
         }
         if(mysqli_query($connect, $q)) {
             $output = "Đổi tên tập tin thành công!";

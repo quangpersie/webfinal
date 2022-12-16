@@ -415,7 +415,7 @@ $num = mysqli_num_rows($run);
             curFile: 'file',
             curFolder: 'folder',
             isFile: false,
-            isImage: true
+            isImage: '1'
         }
 
         function openPopup() {
@@ -544,10 +544,10 @@ $num = mysqli_num_rows($run);
         }
 
         function checkImageFile(type) {
-            if (type == 'jpeg' || type == 'jpg' || type == 'png') {
-                temp.isImage = true
+            if (type != 'jpeg' && type != 'jpg' && type != 'png') {
+                // temp.isImage = true
+                temp.isImage = '0'
             }
-            temp.isImage = false
         }
 
         function shareFile() {
