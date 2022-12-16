@@ -6,11 +6,44 @@
     $folder_name;
     function delFolder($dir) {
         $files = array_diff(scandir($dir), array('.','..'));
-         foreach ($files as $file) {
-           (is_dir("$dir/$file")) ? delFolder("$dir/$file") : unlink("$dir/$file");
-         }
-         return rmdir($dir);
-       }
+            foreach ($files as $file) {
+                (is_dir("$dir/$file")) ? delFolder("$dir/$file") : unlink("$dir/$file");
+            }
+        return rmdir($dir);
+    }
+
+    function delFolderAndFileInIt($connect,$selecting_folder,$id_folder) {
+        $ok = true;
+        $sql_delAllFile="DELETE FROM file WHERE folder='$selecting_folder'";
+        $exec_dellAllFile=mysqli_query($connect,$sql_delAllFile);
+        if(!$exec_dellAllFile) {
+            $ok = false;
+        }
+        $sql="DELETE FROM folder WHERE id='$id_folder'";
+        $exec=mysqli_query($connect,$sql);
+        if(!$exec) {
+            $ok = false;
+        }
+        return $ok;
+    }
+
+    function delFfDb($connect,$id_del_folder,$selecting_folder) {
+        $del_ok = true;
+        $sql = "SELECT * FROM folder WHERE parent='$selecting_folder'";
+        $exec = mysqli_query($connect,$sql);
+        echo 'num = '.mysqli_num_rows($exec) . "";
+        if(mysqli_num_rows($exec) > 0) {
+            while ($row = mysqli_fetch_assoc($exec)) {
+                $id_del_folder = $row['id'];
+                $name_del_folder = $row['name'];
+                delFfDb($connect, $id_del_folder, $name_del_folder);
+            }
+        }
+        if(!delFolderAndFileInIt($connect,$selecting_folder,$id_del_folder)) {
+            $del_ok = false;
+        }
+        return $del_ok;
+    }
 
     if($_SESSION['cur_folder'] == 'NULL') {
         $folder_name = $email;
@@ -51,6 +84,8 @@
         $id_folder = $_POST['id'];
         // get folder name
         $del4ever_folder = '';
+        $flag = true;
+
         $sql = "SELECT * FROM folder WHERE id='$id_folder' LIMIT 1";
         $r=mysqli_query($connect,$sql);
         if($r){
@@ -58,9 +93,13 @@
                 $data=mysqli_fetch_assoc($r);
                 $del4ever_folder=$data['name'];
             }
+            else {
+                $flag = false;
+            }
         }
-        echo 'del4ever_folder = ' . $del4ever_folder.'<br>';
-        echo 'path = ' . $dir_absolute . $del4ever_folder.'<br>';
+        // echo 'del4ever_folder = ' . $del4ever_folder.'<br>'.'\n';
+        // echo 'path = ' . $dir_absolute . $del4ever_folder.'<br>';
+
         // get usable size
         $use_size=0;
         $sql_us="SELECT * FROM users WHERE username='$email'";
@@ -69,39 +108,38 @@
             $d=mysqli_fetch_assoc($run_qr);
             $use_size=$d['use_size'];
         }
-
-        // remove all file in folder and update the usable size in db
-        $qr = "SELECT * FROM file WHERE folder = '$del4ever_folder'";
-        $rs = mysqli_query($connect,$qr);
-        if(mysqli_num_rows($rs) > 0) {
-            while ($row = mysqli_fetch_assoc($rs)) {
-                $id_delete = $row['id'];
-                $file_size = $row['size'];
-                echo 'id_delete = '.$id_delete.'<br>';
-                echo 'file_size = '.$file_size.'<br>';
-                unlink($dir_absolute.$del4ever_folder.'/'.$row['file_name']);
-                
-                $sql_dele="DELETE FROM file WHERE id='$id_delete'";
-                $query_dele=mysqli_query($connect,$sql_dele);
-                if($query_dele) {
-                    $use_size=$use_size-$file_size;
-                }
-            }
+        else {
+            $flag = false;
         }
 
-        // remove local & delete folder in db
+        // remove in db
         $id_folder = $_POST['id'];
+        if(!delFfDb($connect, $id_folder, $del4ever_folder)) {
+            $flag = false;
+        }
+        
         $sql="DELETE FROM folder WHERE id='$id_folder'";
         $exec=mysqli_query($connect,$sql);
-        // rmdir($dir_absolute.$del4ever_folder);
-        delFolder($dir_absolute.$del4ever_folder);
+        if(!$exec) {
+            $flag = false;
+        }
 
-        echo 'use_size = '.$use_size.'<br>';
+        // remove in local
+        if(!delFolder($dir_absolute.$del4ever_folder)) {
+            $flag = false;
+        }
+
         $update="UPDATE users SET use_size='$use_size' WHERE username='$folder_name'";
-        if(mysqli_query($connect,$update)) {
-            echo 'Xóa thành công'.'<br>';
+        if(!mysqli_query($connect,$update)) {
+            $flag = false;
+        }
+
+        if($flag) {
+            echo 'Xóa thành công';
+            echo 'use_size = '.$use_size.'<br>';
         } else {
-            echo 'Đã xảy ra sự cố trong quá trình xóa. Vui lòng thử lại'.'<br>';
+            echo 'Đã xảy ra sự cố trong quá trình xóa. Vui lòng thử lại';
+            echo 'use_size = '.$use_size.'<br>';
         }
     }
     else if(isset($_GET['xoa']) && $_GET['xoa'] == 1){
@@ -160,5 +198,3 @@
             echo 'Xảy ra lỗi.Vui lòng thử lại';
         }
     }
-
-?>

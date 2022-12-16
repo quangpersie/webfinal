@@ -310,7 +310,7 @@ $num = mysqli_num_rows($run);
           data: form_data,
           success: function(dat2) {
             alert(dat2);
-            location.reload();
+            location.reload(); 
           }
         });
       }
