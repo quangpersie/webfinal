@@ -31,7 +31,7 @@
         $del_ok = true;
         $sql = "SELECT * FROM folder WHERE parent='$selecting_folder'";
         $exec = mysqli_query($connect,$sql);
-        echo 'num = '.mysqli_num_rows($exec) . "";
+        // echo 'num = '.mysqli_num_rows($exec) . "";
         if(mysqli_num_rows($exec) > 0) {
             while ($row = mysqli_fetch_assoc($exec)) {
                 $id_del_folder = $row['id'];
@@ -136,11 +136,10 @@
 
         if($flag) {
             echo 'Xóa thành công';
-            echo 'use_size = '.$use_size.'<br>';
         } else {
             echo 'Đã xảy ra sự cố trong quá trình xóa. Vui lòng thử lại';
-            echo 'use_size = '.$use_size.'<br>';
         }
+        // echo 'use_size = '.$use_size.'<br>';
     }
     else if(isset($_GET['xoa']) && $_GET['xoa'] == 1){
         $id_delete=$_POST['id'];
