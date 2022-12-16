@@ -60,13 +60,6 @@ if (isset($_GET['dangxuat']) && $_GET['dangxuat'] == 1) {
 $dir = $dir.join('/', $_SESSION['path']);
 echo $dir; */
 
-if (isset($_POST['submit']) && $_POST['submit'] = "submit-search") {
-    $search = strtok($_POST['search'], ".");
-    $search = mysqli_escape_string($connect, $search);
-    $sql_search = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and SUBSTRING_INDEX(file_name,'.',1) LIKE '%$search%'";
-    $run = mysqli_query($connect, $sql_search);
-    $num = mysqli_num_rows($run);
-}
 $sql_select;
 if ($_SESSION['cur_folder'] == 'NULL') {
     $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder is NULL";
@@ -89,7 +82,12 @@ $num = mysqli_num_rows($run);
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-    <title>Trang chủ</title>
+    <title>Quản lý dữ liệu-Trang chủ</title>
+    <style>
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -107,7 +105,7 @@ $num = mysqli_num_rows($run);
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <form action="index.php?search=1" method="POST" class="d-flex" role="search" style="width: 60%; padding-left:10%;">
-                        <input class="form-control me-2" name="search" value="<?php echo (isset($search)) ? $search : ''; ?>" type="search" placeholder="Tìm kiếm" aria-label="Search">
+                    <input class="form-control me-2" name="search" type="search" placeholder="Tìm kiếm" aria-label="Search" id="charSearch">
                         <button class="btn btn-outline-success" name="submit" value="submit-search" type="submit">Tìm</button>
                     </form>
                     <ul>
@@ -128,7 +126,6 @@ $num = mysqli_num_rows($run);
                             <ul class="dropdown-menu" id="dropdownLogin">
                                 <li><a class="dropdown-item" href="./editInfor.php">Hồ sơ của tôi</a></li>
                                 <li><a class="dropdown-item" href="./changePassword.php">Đổi mật khẩu</a></li>
-
                                 <li><a class="dropdown-item" href="index.php?dangxuat=1">Đăng xuất</a></li>
                             </ul>
                         </li>
@@ -201,7 +198,7 @@ $num = mysqli_num_rows($run);
                         </form>
                     </div>
                 </div>
-                
+
                 <!-- edit file -->
                 <div>
                     <div class="popup" id="popupEditFile">
@@ -258,7 +255,7 @@ $num = mysqli_num_rows($run);
 
             <div style="display: none;">Here</div>
             <article id="art2">
-                <div class="row">
+                <div class="row" id="display_file">
                     <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="#" onclick="changePath('NULL')">Thư mục gốc</a></li>
@@ -277,7 +274,6 @@ $num = mysqli_num_rows($run);
                         </ol>
                     </nav>
                     <?php
-                    if (!isset($_GET['search'])) {
                         $select_folder;
                         if ($_SESSION['cur_folder'] == 'NULL') {
                             $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent is NULL";
@@ -286,8 +282,10 @@ $num = mysqli_num_rows($run);
                         }
                         $exec_folder = mysqli_query($connect, $select_folder);
                         $fnum = mysqli_num_rows($exec_folder);
+                        $folder_data = array();
                         if ($fnum != 0) {
                             while ($row = mysqli_fetch_array($exec_folder)) {
+                                array_push($folder_data, $row)
                     ?>
                                 <div class="col-lg-3 col-md-3">
                                     <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px;">
@@ -297,17 +295,17 @@ $num = mysqli_num_rows($run);
                                                 <?php echo $row['name'] ?>
                                             </p>
                                             <div class="dropdown" id="dropdownThuMuc" style=" background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;">
-                                                <button onclick="getCurFolder('<?=$row['name']?>', '<?=$row['id']?>')" id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button onclick="getCurFolder('<?= $row['name'] ?>', '<?= $row['id'] ?>')" id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <img src="./CSS/images/3dot.png" width="15%" height="15%">
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="download.php?path=<?php echo $row['name'] ?>&username=<?php echo $row['username'] ?>">Tải về</a></li>
-                                                    <li><a class="dropdown-item" href="#" onclick="showRenameFolder()">Đổi tên thư mục</a></li>
-                                                    <li><a class="dropdown-item" href="#" onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
+                                                    <li><a class="dropdown-item" href="#">Tải về</a></li>
+                                                    <li><a class="dropdown-item cursor-pointer" onclick="showRenameFolder()">Đổi tên thư mục</a></li>
+                                                    <li><a class="dropdown-item cursor-pointer" onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
                                                     </li>
-                                                    <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
-                                                    <li><a class="dropdown-item" href="#">Thêm vào quan trọng</a></li>
-                                                    <li><a class="dropdown-item" href="#" onclick="deletedFolder('<?=$row['id']?>')">Xóa</a></li>
+                                                    <li><a class="dropdown-item cursor-pointer">Chia sẻ</a></li>
+                                                    <li><a class="dropdown-item cursor-pointer" href="set_starred.php?id_folder=<?php echo $row['id'] ?>">Thêm vào quan trọng</a></li>
+                                                    <li><a class="dropdown-item cursor-pointer" onclick="deletedFolder('<?= $row['id'] ?>')">Xóa thư mục</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -316,15 +314,15 @@ $num = mysqli_num_rows($run);
                     <?php
                             }
                         }
-                    }
                     ?>
 
-
                     <?php
+                    $file_data = array();
                     if ($num == 0 && $fnum == 0) {
                         echo "<h2 style=\"text-align:center\">Chưa có dữ liệu lưu trữ</h2>";
                     } else {
                         while ($row = mysqli_fetch_array($run)) {
+                            array_push($file_data, $row);
                     ?>
                             <div class="col-lg-3 col-md-3">
                                 <div class="card" style="width: 85%; background-color: rgb(247, 251, 252);border: 0px;">
@@ -340,18 +338,17 @@ $num = mysqli_num_rows($run);
                                             ?>
                                         </p>
                                         <div class="dropdown" id="dropdownThuMuc" style=" background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;">
-                                            <button onclick="getCurFile('<?=$row['file_name']?>', '<?=$row['id']?>')" id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <button onclick="getCurFile('<?= $row['file_name'] ?>', '<?= $row['id'] ?>')" id="dropDownOfFile" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <img src="./CSS/images/3dot.png" width="15%" height="15%">
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="download.php?file_down=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
-                                                <li><a class=" dropdown-item" href="#" onclick="showRenameFile()">Đổi tên tập tin</a></li>
-                                                <li><a class="dropdown-item btn btn-success" id="<?php echo $row['id']; ?>"
-                                                data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="getDetail(
-                                                <?php echo $row['id'] ?>)">Xem chi tiết </a></li>
-                                                <li><a class="dropdown-item" href="#" onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
+                                                <li><a class="dropdown-item" href="download.php?file_down=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải về</a></li>
+                                                <li><a class=" dropdown-item cursor-pointer" onclick="showRenameFile(),checkImageFile('<?= $row['type']; ?>')">Đổi tên tập tin</a></li>
+                                                <li><a class="dropdown-item cursor-pointer" id="<?php echo $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="getDetail(
+                                                <?php echo $row['id'] ?>)">Xem chi tiết</a></li>
+                                                <li><a class="dropdown-item cursor-pointer" onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
                                                 <li><a class="dropdown-item" href="set_starred.php?id=<?php echo $row['id'] ?>">Thêm vào quan trọng</a></li>
-                                                <li><a class="dropdown-item" href="#" onclick="deletedFile(<?php echo $row['id'] ?>)">Xóa</a></li>
+                                                <li><a class="dropdown-item cursor-pointer" onclick="deletedFile(<?php echo $row['id'] ?>)">Xóa tập tin</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -414,7 +411,7 @@ $num = mysqli_num_rows($run);
         var popupEditFile = document.getElementById("popupEditFile");
 
         var temp = {
-            id : -1,
+            id: -1,
             curFile: 'file',
             curFolder: 'folder',
             isFile: false,
@@ -546,6 +543,13 @@ $num = mysqli_num_rows($run);
             return del;
         }
 
+        function checkImageFile(type) {
+            if (type == 'jpeg' || type == 'jpg' || type == 'png') {
+                temp.isImage = true
+            }
+            temp.isImage = false
+        }
+
         function shareFile() {
             users = document.getElementById("users").value;
             id_file = document.getElementById("id_file").value;
@@ -607,13 +611,13 @@ $num = mysqli_num_rows($run);
             });
         }
 
-        function getCurFolder(cfo,id) {
+        function getCurFolder(cfo, id) {
             temp.curFolder = cfo
             temp.id = id
             temp.isFile = false
         }
 
-        function getCurFile(cfi,id) {
+        function getCurFile(cfi, id) {
             temp.curFile = cfi
             temp.id = id
             temp.isFile = true
@@ -647,17 +651,17 @@ $num = mysqli_num_rows($run);
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        usernameFO: '<?=$email?>',
+                        usernameFO: '<?= $email ?>',
                         new_nameFO: efo,
                         idFO: temp.id,
                         old_nameFO: temp.curFolder,
                     },
-                    success: function(data_success){
+                    success: function(data_success) {
                         alert(data_success.message)
                         location.href = 'index.php';
                         location.reload()
                     },
-                    error: function(data_fail){
+                    error: function(data_fail) {
                         alert(data_fail.message)
                     }
                 })
@@ -674,18 +678,18 @@ $num = mysqli_num_rows($run);
                     type: 'POST',
                     dataType: 'json',
                     data: {
-                        usernameFI: '<?=$email?>',
+                        usernameFI: '<?= $email ?>',
                         new_nameFI: efi,
                         idFI: temp.id,
                         old_nameFI: temp.curFile,
-                        isImg: true
+                        isImg: temp.isImage
                     },
-                    success: function(data_success){
+                    success: function(data_success) {
                         alert(data_success.message)
                         location.href = 'index.php';
                         location.reload()
                     },
-                    error: function(data_fail){
+                    error: function(data_fail) {
                         alert(data_fail.message)
                     }
                 })
@@ -704,17 +708,91 @@ $num = mysqli_num_rows($run);
                     get_detail: 'ok'
                 },
                 dataType: 'json',
-                success: function (data) {
+                success: function(data) {
                     console.log('ok')
                     $('#name_detail').text(data.data.file_name);
                     $('#type_detail').text(data.data.type);
-                    $('#size_detail').text(data.data.size+" B");
+                    $('#size_detail').text(data.data.size + " B");
                 },
-                error: function (data) {
+                error: function(data) {
                     console.log('khok')
                 }
             });
         }
+
+        $(document).ready(function() {
+            $("#charSearch").on('input', function() {
+                var file_data = <?php echo json_encode($file_data) ?>;
+                var folder_data = <?php echo json_encode($folder_data) ?>;
+                var char = $("#charSearch").val();
+                var result = file_data.filter(element => element['file_name'].includes(char));
+                var resulte = folder_data.filter(element => element['name'].includes(char));
+                // for(i=0;i<resulte.length;i++){
+                //     result.push(resulte[i]);
+                // }
+                var html_result = "";
+                if (resulte.length > 0) {
+                    var ht1 = "";
+                    for (i = 0; i < resulte.length; i++) {
+                        ht1 += "<div class=\"col-lg-3 col-md-3\"> <div class=\"card\" style=\"width: 85%; background-color: rgb(247, 251, 252);border: 0px;\">";
+                        ht1 += "<img src=\"./CSS/images/folder.webp\" class=\"card-img-top\" width=\"256px\" height=\"256px\">";
+                        ht1 += "<div class=\"card-body\">";
+                        ht1 += "<p class=\"card-text\" id=\"file_name\">";
+                        ht1 += resulte[i]['name'].substr(0, 19);
+                        ht1 += "</p>";
+                        ht1 += "<div class=\"dropdown\" id=\"dropdownThuMuc\" style=\"background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;\">";
+                        ht1 += "<button onclick=\"getCurFile(" + "'" + resulte[i]['name'] + "','" + resulte[i]['id'] + "'" + ')"' + " id=\"dropDownOfFile\" type=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">";
+                        ht1 += "<img src=\"./CSS/images/3dot.png\" width=\"15%\" height=\"15%\">";
+                        ht1 += "</button>";
+                        ht1 += "<ul class=\"dropdown-menu\">";
+                        ht1 += "<li><a class=\"dropdown-item\" href=\"download.php?path=" + resulte[i]['name'] + "&username=" + resulte[i]['username'] + "\"" + ">Tải về</a></li>";
+                        ht1 += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"showRenameFile()\">Đổi tên thư mục</a></li>";
+                        ht1 += "<li><a class=\"dropdown-item\" href=\"#\">Xem chi tiết </a></li>";
+                        ht1 += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"openShare(" + resulte[i]['id'] + ")\"" + ">Chia sẻ</a></li>";
+                        ht1 += "<li><a class=\"dropdown-item\" href=\"set_starred.php?id=" + resulte[i]['id'] + "\">Thêm vào quan trọng</a></li>";
+                        ht1 += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"deletedFile(" + resulte[i]['id'] + ")" + "\">Xóa</a></li>";
+                        ht1 += "</ul>";
+                        ht1 += "</div>";
+                        ht1 += "</div>";
+                        ht1 += "</div>";
+                        ht1 += "</div>";
+                    }
+                    html_result += ht1;
+                }
+
+                if (result.length > 0) {
+                    ht2 = "";
+                    for (i = 0; i < result.length; i++) {
+                        ht2 += "<div class=\"col-lg-3 col-md-3\"> <div class=\"card\" style=\"width: 85%; background-color: rgb(247, 251, 252);border: 0px;\">";
+                        ht2 += "<img src=\"./" + result[i]['image'] + '"' + " class=\"card-img-top\" width=\"256px\" height=\"256px\">";
+                        ht2 += "<div class=\"card-body\">";
+                        ht2 += "<p class=\"card-text\" id=\"file_name\">";
+                        ht2 += result[i]['file_name'].substr(0, 19);
+                        ht2 += "</p>";
+                        ht2 += "<div class=\"dropdown\" id=\"dropdownThuMuc\" style=\"background-color: rgb(247, 251, 252);color: rgb(0, 74, 124);font-family: 'Times New Roman', Times, serif;\">";
+                        ht2 += "<button onclick=\"getCurFile(" + "'" + result[i]['file_name'] + "','" + result[i]['id'] + "'" + ')"' + " id=\"dropDownOfFile\" type=\"button\" data-bs-toggle=\"dropdown\" aria-expanded=\"false\">";
+                        ht2 += "<img src=\"./CSS/images/3dot.png\" width=\"15%\" height=\"15%\">";
+                        ht2 += "</button>";
+                        ht2 += "<ul class=\"dropdown-menu\">";
+                        ht2 += "<li><a class=\"dropdown-item\" href=\"download.php?path=" + result[i]['file_name'] + "&username=" + result[i]['username'] + "\"" + ">Tải về</a></li>";
+                        ht2 += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"showRenameFile()\">Đổi tên tập tin</a></li>";
+                        ht2 += "<li><a class=\"dropdown-item\" href=\"#\">Xem chi tiết </a></li>";
+                        ht2 += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"openShare(" + result[i]['id'] + ")\"" + ">Chia sẻ</a></li>";
+                        ht2 += "<li><a class=\"dropdown-item\" href=\"set_starred.php?id=" + result[i]['id'] + "\">Thêm vào quan trọng</a></li>";
+                        ht2 += "<li><a class=\"dropdown-item\" href=\"#\" onclick=\"deletedFile(" + result[i]['id'] + ")" + "\">Xóa</a></li>";
+                        ht2 += "</ul>";
+                        ht2 += "</div>";
+                        ht2 += "</div>";
+                        ht2 += "</div>";
+                        ht2 += "</div>";
+                    }
+                    html_result += ht2;
+                }
+                console.log(html_result);
+                document.getElementById("display_file").innerHTML = html_result;
+            })
+        });
     </script>
 </body>
+
 </html>

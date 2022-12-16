@@ -35,28 +35,28 @@
         $limit=$data['size_page'];
     }
     $image="CSS/images/";
-    if($type=='doc' || $type=='docx'){
+    if($type == 'doc' || $type == 'docx'){
         $image = $image.'doc.png';
     }
-    else if($type=='pdf'){
-        $image=$image.'pdf.png';
+    else if($type == 'pdf'){
+        $image = $image.'pdf.png';
     }
-    else if($type=='ppt' || $type=='pptx'){
+    else if($type == 'ppt' || $type == 'pptx'){
         $image = $image . 'ppt.png';
     }
-    else if($type=='txt'){
+    else if($type == 'txt'){
         $image = $image . 'txt.png';
     }
-    else if($type=='mp3'){
+    else if($type == 'mp3'){
         $image = $image . 'mp3.png';
     }
-    else if($type=='xlsx'){
+    else if($type == 'xlsx'){
         $image = $image . 'xls.png';
     }
     else {
-        $image= $dir_sql . $filename;
+        $image = $dir_sql . $filename;
     }
-    $new_path=$dir_sql.$filename;
+    $new_path = $dir_sql.$filename;
     if (file_exists($target_file)) {
         echo "Tệp tin đã tồn tại.";
         $uploadOk = 0;
@@ -74,7 +74,7 @@
     }
     else {
         if (move_uploaded_file($_FILES['file']['tmp_name'], $new_path)) {
-            $use=$use+$size;
+            $use = $use+ $size;
             if($use>$limit) {
                 echo 'Dung lượng lưu trữ đã đạt tối đa. Không thể lưu trữ thêm';
             }

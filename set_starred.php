@@ -11,7 +11,7 @@
             header("Location:priority.php");
         }
         else{
-            echo mysqli_errno($connect);
+            echo mysqli_error($connect);
         }
     }
     
@@ -22,9 +22,27 @@
         if ($run) {
             header("Location:priority.php");
         } else {
-            echo mysqli_errno($connect);
+            echo mysqli_error($connect);
         }
     }
-
-
+    if(isset($_GET['id_folder'])){
+        $id = $_GET['id_folder'];
+        $sql = "UPDATE folder SET priority='1',modify='$t' WHERE id='$id'";
+        $run = mysqli_query($connect, $sql);
+        if ($run) {
+            header("Location:priority.php");
+        } else {
+            echo mysqli_error($connect);
+        }
+    }
+    if (isset($_GET['folder_huy'])) {
+        $id = $_GET['folder_huy'];
+        $sql = "UPDATE folder SET priority='0',modify='$t' WHERE id='$id'";
+        $run = mysqli_query($connect, $sql);
+        if ($run) {
+            header("Location:priority.php");
+        } else {
+            echo mysqli_error($connect);
+        }
+    }
 ?>

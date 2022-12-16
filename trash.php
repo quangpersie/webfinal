@@ -103,8 +103,7 @@ $num = mysqli_num_rows($run);
           </button>
           <ul class="dropdown-menu" id="dropdownUL">
             <li><a class="dropdown-item" href="index.php">Thư mục gốc</a></li>
-            <!-- <li><a class="dropdown-item" href="#">Thêm thư mục</a></li>
-            <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li> -->
+            <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li>
           </ul>
         </div>
 
@@ -155,7 +154,6 @@ $num = mysqli_num_rows($run);
 
       <article id="art2">
         <div class="row">
-
           <?php
           if (!isset($_GET['search'])) {
             $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='1'";

@@ -46,6 +46,9 @@ require_once('vendor/autoload.php');
                 $k = $key;
                 sendToUser($user_share, $k);
             }
+            else{
+                echo 'Chia sẻ file thành công';
+            }
             
         } else {
             echo 'Đã xảy ra lỗi.Vui lòng thử lại';
