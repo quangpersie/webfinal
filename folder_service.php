@@ -10,7 +10,21 @@
         $_SESSION['assign_path'] = array();
     }
 
-    if(isset($_POST['change_path'])) {
+    if(isset($_POST['get_detail'])) {
+        $id = $_POST['id'];
+        $query = "SELECT * FROM file WHERE id = '$id'";
+        $exec = mysqli_query($connect, $query);
+        $num = mysqli_num_rows($exec);
+        if ($num != 0) {
+            while ($row = mysqli_fetch_assoc($exec)) {
+                $output['file_name'] = $row['file_name'];
+                $output['type'] = $row['type'];
+                $output['size'] = $row['size'];
+            }
+            echo json_encode(array('data' => $output));
+        }
+    }
+    else if(isset($_POST['change_path'])) {
         $cp = $_POST['change_path'];
         if($cp != 'NULL') {
             // array_push($_SESSION['assign_path'], $cp);

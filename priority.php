@@ -104,8 +104,8 @@ $run_sql = mysqli_query($connect, $sql_sl);
                     </button>
                     <ul class="dropdown-menu" id="dropdownUL">
                         <li><a class="dropdown-item" href="index.php">Thư mục gốc</a></li>
-                        <li><a class="dropdown-item" href="#">Thêm thư mục</a></li>
-                        <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li>
+                        <!-- <li><a class="dropdown-item" href="#">Thêm thư mục</a></li>
+                        <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li> -->
                     </ul>
                 </div>
 

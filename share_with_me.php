@@ -120,7 +120,6 @@ if (isset($_GET['key'])) {
                             <ul class="dropdown-menu" id="dropdownLogin">
                                 <li><a class="dropdown-item" href="./editInfor.php">Hồ sơ của tôi</a></li>
                                 <li><a class="dropdown-item" href="./changePassword.php">Đổi mật khẩu</a></li>
-
                                 <li><a class="dropdown-item" href="index.php?dangxuat=1">Đăng xuất</a></li>
                         </li>
                     </ul>
@@ -139,8 +138,8 @@ if (isset($_GET['key'])) {
                     </button>
                     <ul class="dropdown-menu" id="dropdownUL">
                         <li><a class="dropdown-item" href="index.php">Thư mục gốc</a></li>
-                        <li><a class="dropdown-item" href="#">Thêm thư mục</a></li>
-                        <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li>
+                        <!-- <li><a class="dropdown-item" href="#">Thêm thư mục</a></li>
+                        <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li> -->
                     </ul>
                 </div>
 

@@ -346,7 +346,9 @@ $num = mysqli_num_rows($run);
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="download.php?path=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>"">Tải về</a></li>
                                                 <li><a class=" dropdown-item" href="#" onclick="showRenameFile()">Đổi tên tập tin</a></li>
-                                                <li><a class="dropdown-item" href="#">Xem chi tiết </a></li>
+                                                <li><a class="dropdown-item btn btn-success" id="<?php echo $row['id']; ?>"
+                                                data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="getDetail(
+                                                <?php echo $row['id'] ?>)">Xem chi tiết </a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
                                                 <li><a class="dropdown-item" href="set_starred.php?id=<?php echo $row['id'] ?>">Thêm vào quan trọng</a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="deletedFile(<?php echo $row['id'] ?>)">Xóa</a></li>
@@ -381,6 +383,27 @@ $num = mysqli_num_rows($run);
             </article>
         </section>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Chi tiết tập tin</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body ">
+                    <p><b>File Name</b>:<span class="ms-2" id="name_detail"></span></p>
+                    <p><b>Type</b>:<span class="ms-2" id="type_detail"></span></p>
+                    <p><b>Size</b>:<span class="ms-2" id="size_detail"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>Footer</p>
     </footer>
@@ -394,7 +417,8 @@ $num = mysqli_num_rows($run);
             id : -1,
             curFile: 'file',
             curFolder: 'folder',
-            isFile: false
+            isFile: false,
+            isImage: true
         }
 
         function openPopup() {
@@ -656,6 +680,7 @@ $num = mysqli_num_rows($run);
                         new_nameFI: efi,
                         idFI: temp.id,
                         old_nameFI: temp.curFile,
+                        isImg: true
                     },
                     success: function(data){
 
@@ -669,6 +694,28 @@ $num = mysqli_num_rows($run);
             } else {
                 alert('Tên tập tin không thể trống!')
             }
+        }
+
+        function getDetail(fid) {
+            var modalID = temp.id;
+            $.ajax({
+                url: "folder_service.php",
+                type: "POST",
+                data: {
+                    id: modalID,
+                    get_detail: 'ok'
+                },
+                dataType: 'json',
+                success: function (data) {
+                    console.log('ok')
+                    $('#name_detail').text(data.data.file_name);
+                    $('#type_detail').text(data.data.type);
+                    $('#size_detail').text(data.data.size+" B");
+                },
+                error: function (data) {
+                    console.log('khok')
+                }
+            });
         }
     </script>
 </body>
