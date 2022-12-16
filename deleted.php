@@ -129,7 +129,7 @@
             $flag = false;
         }
 
-        $update="UPDATE users SET use_size='$use_size' WHERE username='$folder_name'";
+        $update="UPDATE users SET use_size='$use_size' WHERE username='$email'";
         if(!mysqli_query($connect,$update)) {
             $flag = false;
         }
@@ -147,7 +147,7 @@
         $file_name='';
         $file_size=0;
         $use_size=0;
-        $sql_us="SELECT * FROM users WHERE username='$folder_name'";
+        $sql_us="SELECT * FROM users WHERE username='$email'";
         $run_qr=mysqli_query($connect,$sql_us);
         if($run_qr){
             $d=mysqli_fetch_assoc($run_qr);
@@ -162,7 +162,7 @@
                 $file_size=$data['size'];
             }
         }
-        unlink($dir.$file_name);
+        unlink($dir_absolute.$file_name);
         $sql_dele="DELETE FROM file WHERE id='$id_delete'";
         $query_dele=mysqli_query($connect,$sql_dele);
         if($query_dele){
