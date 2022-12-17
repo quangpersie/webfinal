@@ -13,10 +13,14 @@ if (isset($_SESSION['assign_path'])) {
 } else {
     $_SESSION['path'] = array();
 }
-if (isset($_SESSION['assign_folder'])) {
+/* if (isset($_SESSION['assign_folder'])) {
     $_SESSION['cur_folder'] = $_SESSION['assign_folder'];
 } else {
     $_SESSION['cur_folder'] = 'NULL';
+} */
+
+if(!isset($_SESSION['assign_folder'])) {
+    $_SESSION['assign_folder'] = '';
 }
 
 // debug
@@ -61,10 +65,10 @@ $dir = $dir.join('/', $_SESSION['path']);
 echo $dir; */
 
 $sql_select;
-if ($_SESSION['cur_folder'] == 'NULL') {
+if ($_SESSION['assign_folder'] == '') {
     $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder is NULL";
 } else {
-    $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder ='" . $_SESSION['cur_folder'] . "'";
+    $sql_select = "SELECT * FROM file WHERE username='" . $email . "' and deleted='0' and folder ='" . $_SESSION['assign_folder'] . "'";
 }
 $run = mysqli_query($connect, $sql_select);
 
@@ -113,10 +117,10 @@ $num = mysqli_num_rows($run);
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <?php
                                 if ($name != "") {
-                                    if ($_SESSION['cur_folder'] === "NULL") {
+                                    if ($_SESSION['assign_folder'] === "") {
                                         echo $name . ' - ' . 'Root';
                                     } else {
-                                        echo $name . ' - ' . $_SESSION['cur_folder'];
+                                        echo $name . ' - ' . $_SESSION['assign_folder'];
                                     }
                                 } else {
                                     echo "User";
@@ -144,7 +148,7 @@ $num = mysqli_num_rows($run);
                         Thư mục của tôi
                     </button>
                     <ul class="dropdown-menu" id="dropdownUL">
-                        <li><a class="dropdown-item" href="index.php" onclick="changePath('NULL')">Thư mục gốc</a></li>
+                        <li><a class="dropdown-item" href="index.php" onclick="changePath('')">Thư mục gốc</a></li>
                         <li><a class="dropdown-item" href="#" onclick="openPopupFolder()">Thêm thư mục</a></li>
                         <li><a class="dropdown-item" href="#">Quản lý thư mục</a></li>
                     </ul>
@@ -258,7 +262,7 @@ $num = mysqli_num_rows($run);
                 <div class="row" id="display_file">
                     <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#" onclick="changePath('NULL')">Thư mục gốc</a></li>
+                            <li class="breadcrumb-item"><a href="#" onclick="changePath('')">Thư mục gốc</a></li>
                             <!-- other folders -->
                             <?php
                             $variable = $_SESSION['path'];
@@ -275,10 +279,10 @@ $num = mysqli_num_rows($run);
                     </nav>
                     <?php
                         $select_folder;
-                        if ($_SESSION['cur_folder'] == 'NULL') {
+                        if ($_SESSION['assign_folder'] == '') {
                             $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent is NULL";
                         } else {
-                            $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent ='" . $_SESSION['cur_folder'] . "'";
+                            $select_folder = "SELECT * FROM folder WHERE username='" . $email . "' and deleted='0' and parent ='" . $_SESSION['assign_folder'] . "'";
                         }
                         $exec_folder = mysqli_query($connect, $select_folder);
                         $fnum = mysqli_num_rows($exec_folder);
@@ -447,7 +451,7 @@ $num = mysqli_num_rows($run);
                 var form_data = new FormData();
                 form_data.append("file", file_data);
                 form_data.append("filename", file_name);
-                form_data.append("folder", '<?= $_SESSION['cur_folder'] ?>')
+                form_data.append("folder", '<?= $_SESSION['assign_folder'] ?>')
                 $.ajax({
                     url: "upload.php",
                     type: "POST",
@@ -476,7 +480,7 @@ $num = mysqli_num_rows($run);
                     data: {
                         username: '<?= $email ?>',
                         name: fname,
-                        parent: '<?= $_SESSION['cur_folder'] ?>',
+                        parent: '<?= $_SESSION['assign_folder'] ?>',
                     },
                     success: function(data_success) {
                         alert(data_success.data);

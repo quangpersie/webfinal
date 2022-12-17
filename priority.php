@@ -2,17 +2,15 @@
 session_start();
 include_once('./config.php');
 // $_SESSION = [];
-$cur_fol_pri = '';
 if(isset($_SESSION['assign_path_pri'])) {
     $_SESSION['path_pri'] = $_SESSION['assign_path_pri'];
 } else {
     $_SESSION['path_pri'] = array();
 }
 
-// $_SESSION['cur_folder_pri'] = '';
-// if (isset($_SESSION['assign_folder_pri'])) {
-//     $_SESSION['cur_folder_pri'] = $_SESSION['assign_folder_pri'];
-// }
+if(!isset($_SESSION['assign_folder_pri'])) {
+    $_SESSION['assign_folder_pri'] = '';
+}
 
 $connect = connect();
 $login = false;
@@ -102,11 +100,7 @@ $num_folder = mysqli_num_rows($exec_folder);
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <?php
                                 if ($name != "") {
-                                    if ($_SESSION['cur_folder'] === "NULL") {
-                                        echo $name . ' - ' . 'Root';
-                                    } else {
-                                        echo $name . ' - ' . $_SESSION['cur_folder'];
-                                    }
+                                    echo $name;
                                 } else {
                                     echo "User";
                                 }
@@ -220,7 +214,7 @@ $num_folder = mysqli_num_rows($exec_folder);
                             <?php
                             $variable = $_SESSION['path_pri'];
                             foreach ($variable as $key) {
-                                if ($key != 'NULL') {
+                                if ($key != '') {
                             ?>
                                 <li class="breadcrumb-item"><a href="#" onclick="changePath('<?= $key ?>')"><?= $key ?></a></li>
                             <?php
@@ -250,7 +244,7 @@ $num_folder = mysqli_num_rows($exec_folder);
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="#">Tải về</a></li>
-                                                <li><a class="dropdown-item" href="#" onclick="showRenameFolder()">Đổi tên thư mục</a></li>
+                                                <!-- <li><a class="dropdown-item" href="#" onclick="showRenameFolder()">Đổi tên thư mục</a></li> -->
                                                 <li><a class="dropdown-item" href="#" onclick="changePath('<?php echo $row['name'] ?>')">Xem chi tiết </a>
                                                 </li>
                                                 <li><a class="dropdown-item" href="#">Chia sẻ</a></li>
@@ -292,7 +286,7 @@ $num_folder = mysqli_num_rows($exec_folder);
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" href="download.php?file_down=<?php echo $row['file_name'] ?>&username=<?php echo $row['username'] ?>">Tải về</a></li>
-                                                <li><a class=" dropdown-item" href="#" onclick="showRenameFile()">Đổi tên tập tin</a></li>
+                                                <!-- <li><a class=" dropdown-item" href="#" onclick="showRenameFile()">Đổi tên tập tin</a></li> -->
                                                 <li><a class="dropdown-item cursor-pointer" id="<?php echo $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="getDetail(
                                                 <?php echo $row['id'] ?>)">Xem chi tiết</a></li>
                                                 <li><a class="dropdown-item" href="#" onclick="openShare(<?php echo $row['id'] ?>)">Chia sẻ</a></li>
@@ -356,8 +350,8 @@ $num_folder = mysqli_num_rows($exec_folder);
     <script>
         var popup = document.getElementById("popup");
         var popupFolder = document.getElementById("popupFolder");
-        var popupEditFolder = document.getElementById("popupEditFolder");
-        var popupEditFile = document.getElementById("popupEditFile");
+        // var popupEditFolder = document.getElementById("popupEditFolder");
+        // var popupEditFile = document.getElementById("popupEditFile");
 
         var temp = {
             id: -1,
@@ -508,7 +502,7 @@ $num_folder = mysqli_num_rows($exec_folder);
             temp.isFile = true
         }
 
-        function showRenameFolder() {
+        /* function showRenameFolder() {
             popupEditFolder.classList.add("open-popup");
             $('#idEditFolderName').val(temp.curFolder)
         }
@@ -581,7 +575,7 @@ $num_folder = mysqli_num_rows($exec_folder);
             } else {
                 alert('Tên tập tin không thể trống!')
             }
-        }
+        } */
 
         function getDetail(fid) {
             var modalID = temp.id;

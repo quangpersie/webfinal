@@ -18,7 +18,7 @@
 
     if(isset($_POST['change_path'])) {
         $cp = $_POST['change_path'];
-        if($cp != 'NULL') {
+        if($cp != '') {
             // array_push($_SESSION['assign_path'], $cp);
             // array_pop($_SESSION['assign_path']);
             if(!in_array($cp, $_SESSION['assign_path'])) {
